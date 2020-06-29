@@ -5,6 +5,8 @@
  */
 package Main;
 
+import UI.MainFrame;
+
 /**
  *
  * @author Sebas
@@ -15,7 +17,9 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        MainFrame f1 = new MainFrame();//Crear el Frame1 XD
+        f1.setVisible(true);//Muestre el Main Frame
+
     }
-    
+
 }
