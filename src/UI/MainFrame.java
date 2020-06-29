@@ -55,7 +55,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAddEvento)
                     .addComponent(btnAddViatico))
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addContainerGap(569, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -64,7 +64,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(btnAddEvento)
                 .addGap(18, 18, 18)
                 .addComponent(btnAddViatico)
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addContainerGap(437, Short.MAX_VALUE))
         );
 
         pack();
