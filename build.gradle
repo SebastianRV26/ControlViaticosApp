@@ -5,11 +5,14 @@ apply plugin: 'application'
 
 mainClassName = 'app.Main'
 
+tasks.withType(JavaCompile) {options.encoding = 'UTF-8'}
+
 repositories {
     jcenter()
     mavenCentral()
 }
 
 dependencies {
+    implementation group: 'com.github.lgooddatepicker', name: 'LGoodDatePicker', version: '10.3.1'
     testImplementation 'junit:junit:4.13'
 }
