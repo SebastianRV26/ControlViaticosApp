@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI;
+package app.ui.main;
+
+import app.ui.event.EventFrame;
+import app.ui.expense.ExpenseFrame;
 
 /**
  *
@@ -71,13 +74,13 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddEventoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddEventoActionPerformed
-        Evento f1 = new Evento();//Crear el Frame1 XD
+        EventFrame f1 = new EventFrame();//Crear el Frame1 XD
         f1.setVisible(true);//Muestre el frame1
         dispose();//Eliminar el Frame actual
     }//GEN-LAST:event_btnAddEventoActionPerformed
 
     private void btnAddViaticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddViaticoActionPerformed
-        Viatico f1 = new Viatico();//Crear el Frame1 XD
+        ExpenseFrame f1 = new ExpenseFrame();//Crear el Frame1 XD
         f1.setVisible(true);//Muestre el frame1
         dispose();//Eliminar el Frame actual
     }//GEN-LAST:event_btnAddViaticoActionPerformed
