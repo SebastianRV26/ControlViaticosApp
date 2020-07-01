@@ -29,7 +29,7 @@
                   <Component id="btnAddEvento" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="btnAddViatico" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="569" max="32767" attributes="0"/>
+              <EmptySpace pref="270" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -40,7 +40,7 @@
               <Component id="btnAddEvento" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="btnAddViatico" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="437" max="32767" attributes="0"/>
+              <EmptySpace pref="212" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
