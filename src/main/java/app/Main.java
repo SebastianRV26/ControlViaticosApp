@@ -1,6 +1,5 @@
 package app;
 
-import app.ui.expense.ExpenseFrame;
 import app.ui.main.MainFrame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +22,7 @@ public class Main {
                 }
             }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(ExpenseFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         SwingUtilities.invokeLater(() -> {
