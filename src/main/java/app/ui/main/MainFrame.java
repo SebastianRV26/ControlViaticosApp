@@ -54,6 +54,9 @@ public class MainFrame extends javax.swing.JFrame {
         btnCustomer.setToolTipText("Cliente");
         btnCustomer.setFocusable(false);
         btnCustomer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCustomer.setMaximumSize(new java.awt.Dimension(45, 49));
+        btnCustomer.setMinimumSize(new java.awt.Dimension(45, 49));
+        btnCustomer.setPreferredSize(new java.awt.Dimension(45, 49));
         btnCustomer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnCustomer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -80,6 +83,9 @@ public class MainFrame extends javax.swing.JFrame {
         btnTask.setToolTipText("Labor");
         btnTask.setFocusable(false);
         btnTask.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnTask.setMaximumSize(new java.awt.Dimension(45, 49));
+        btnTask.setMinimumSize(new java.awt.Dimension(45, 49));
+        btnTask.setPreferredSize(new java.awt.Dimension(45, 49));
         btnTask.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnTask.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -106,6 +112,9 @@ public class MainFrame extends javax.swing.JFrame {
         btnReasons.setToolTipText("Motivos");
         btnReasons.setFocusable(false);
         btnReasons.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReasons.setMaximumSize(new java.awt.Dimension(45, 49));
+        btnReasons.setMinimumSize(new java.awt.Dimension(45, 49));
+        btnReasons.setPreferredSize(new java.awt.Dimension(45, 49));
         btnReasons.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnReasons.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,6 +189,8 @@ public class MainFrame extends javax.swing.JFrame {
         toolbar.add(btnVehicles);
 
         getContentPane().add(toolbar, java.awt.BorderLayout.NORTH);
+
+        jDesktopPane1.setBackground(new java.awt.Color(153, 153, 153));
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
