@@ -1,7 +1,10 @@
 package app.ui.main;
 
-public class MainFrame extends javax.swing.JFrame {
+import app.ui.client.list.ClientListFrame;
+import javax.swing.JInternalFrame;
 
+public class MainFrame extends javax.swing.JFrame {
+    
     public MainFrame() {
         initComponents();
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -28,7 +31,7 @@ public class MainFrame extends javax.swing.JFrame {
         btnResources = new javax.swing.JButton();
         btnExpensesType = new javax.swing.JButton();
         btnVehicles = new javax.swing.JButton();
-        jDesktopPane1 = new javax.swing.JDesktopPane();
+        desktopPane = new javax.swing.JDesktopPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Control de Viaticos");
@@ -190,20 +193,20 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(toolbar, java.awt.BorderLayout.NORTH);
 
-        jDesktopPane1.setBackground(new java.awt.Color(153, 153, 153));
+        desktopPane.setBackground(new java.awt.Color(153, 153, 153));
 
-        javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
-        jDesktopPane1.setLayout(jDesktopPane1Layout);
-        jDesktopPane1Layout.setHorizontalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout desktopPaneLayout = new javax.swing.GroupLayout(desktopPane);
+        desktopPane.setLayout(desktopPaneLayout);
+        desktopPaneLayout.setHorizontalGroup(
+            desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        jDesktopPane1Layout.setVerticalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        desktopPaneLayout.setVerticalGroup(
+            desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 249, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jDesktopPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(desktopPane, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
@@ -214,7 +217,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEventActionPerformed
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
-
+        openFrame(new ClientListFrame());
     }//GEN-LAST:event_btnCustomerActionPerformed
 
     private void btnBranchOfficeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBranchOfficeActionPerformed
@@ -252,6 +255,11 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVehiclesActionPerformed
 
     }//GEN-LAST:event_btnVehiclesActionPerformed
+    
+    private void openFrame(JInternalFrame frame) {
+        desktopPane.add(frame);
+        frame.setVisible(true);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBranchOffice;
@@ -265,7 +273,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnTask;
     private javax.swing.JButton btnTaskType;
     private javax.swing.JButton btnVehicles;
-    private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JToolBar toolbar;
     // End of variables declaration//GEN-END:variables
 }
