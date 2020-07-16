@@ -2,6 +2,7 @@ package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
 import app.ui.task.list.TaskListFrame;
+import app.ui.cost.list.CostListFrame;
 import javax.swing.JInternalFrame;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -242,7 +243,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSupportTypeActionPerformed
 
     private void btnCostsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCostsActionPerformed
-
+        openFrame(new CostListFrame());
     }//GEN-LAST:event_btnCostsActionPerformed
 
     private void btnResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResourcesActionPerformed
