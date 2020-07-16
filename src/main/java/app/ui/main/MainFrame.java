@@ -1,10 +1,11 @@
 package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
+import app.ui.cost.list.CostListFrame;
 import javax.swing.JInternalFrame;
 
 public class MainFrame extends javax.swing.JFrame {
-    
+
     public MainFrame() {
         initComponents();
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -241,7 +242,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSupportTypeActionPerformed
 
     private void btnCostsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCostsActionPerformed
-
+        openFrame(new CostListFrame());
     }//GEN-LAST:event_btnCostsActionPerformed
 
     private void btnResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResourcesActionPerformed
@@ -255,7 +256,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVehiclesActionPerformed
 
     }//GEN-LAST:event_btnVehiclesActionPerformed
-    
+
     private void openFrame(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
