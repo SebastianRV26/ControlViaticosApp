@@ -1,6 +1,7 @@
 package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
+import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
 import javax.swing.JInternalFrame;
 
@@ -226,7 +227,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBranchOfficeActionPerformed
 
     private void btnTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskActionPerformed
-
+        openFrame(new TaskListFrame());
     }//GEN-LAST:event_btnTaskActionPerformed
 
     private void btnTaskTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskTypeActionPerformed
