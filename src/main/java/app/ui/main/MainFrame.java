@@ -1,6 +1,7 @@
 package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
+import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
@@ -252,7 +253,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnResourcesActionPerformed
 
     private void btnExpensesTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpensesTypeActionPerformed
-
+        openFrame(new ExpenseTypeListFrame());
     }//GEN-LAST:event_btnExpensesTypeActionPerformed
 
     private void btnVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVehiclesActionPerformed
