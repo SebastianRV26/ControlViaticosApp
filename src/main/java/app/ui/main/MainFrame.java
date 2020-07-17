@@ -1,6 +1,7 @@
 package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
+import app.ui.resource.list.ResourceListFrame;
 import app.ui.reason.list.ReasonListFrame;
 import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
@@ -250,7 +251,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCostsActionPerformed
 
     private void btnResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResourcesActionPerformed
-
+        openFrame(new ResourceListFrame());
     }//GEN-LAST:event_btnResourcesActionPerformed
 
     private void btnExpensesTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpensesTypeActionPerformed
