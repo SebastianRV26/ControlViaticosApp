@@ -1,6 +1,7 @@
 package app.ui.main;
 
 import app.ui.client.list.ClientListFrame;
+import app.ui.reason.list.ReasonListFrame;
 import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
@@ -237,7 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnTaskTypeActionPerformed
 
     private void btnReasonsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReasonsActionPerformed
-
+        openFrame(new ReasonListFrame());
     }//GEN-LAST:event_btnReasonsActionPerformed
 
     private void btnSupportTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupportTypeActionPerformed
