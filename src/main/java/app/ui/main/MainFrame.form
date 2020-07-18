@@ -84,9 +84,9 @@
               <Image iconType="3" name="/icons/branch-office.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Sucursal"/>
-            <Property name="toolTipText" type="java.lang.String" value="Sucursal"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sucursal"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>

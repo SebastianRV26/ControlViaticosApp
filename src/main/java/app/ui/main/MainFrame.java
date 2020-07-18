@@ -1,5 +1,6 @@
 package app.ui.main;
 
+import app.ui.branchOffice.list.BranchOfficeListFrame;
 import app.ui.client.list.ClientListFrame;
 import app.ui.resource.list.ResourceListFrame;
 import app.ui.reason.list.ReasonListFrame;
@@ -228,7 +229,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCustomerActionPerformed
 
     private void btnBranchOfficeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBranchOfficeActionPerformed
-
+        openFrame(new BranchOfficeListFrame());
     }//GEN-LAST:event_btnBranchOfficeActionPerformed
 
     private void btnTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskActionPerformed
