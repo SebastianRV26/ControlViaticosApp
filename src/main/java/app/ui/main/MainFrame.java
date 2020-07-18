@@ -8,6 +8,7 @@ import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
+import app.ui.vehicle.list.VehicleListFrame;
 import app.ui.supportType.list.SupportTypeListFrame;
 import javax.swing.JInternalFrame;
 
@@ -261,7 +262,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExpensesTypeActionPerformed
 
     private void btnVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVehiclesActionPerformed
-
+        openFrame(new VehicleListFrame());
     }//GEN-LAST:event_btnVehiclesActionPerformed
 
     private void openFrame(JInternalFrame frame) {
