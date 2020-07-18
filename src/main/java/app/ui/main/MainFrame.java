@@ -8,6 +8,7 @@ import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
+import app.ui.resource.list.ResourceListFrame;
 import app.ui.vehicle.list.VehicleListFrame;
 import app.ui.supportType.list.SupportTypeListFrame;
 import javax.swing.JInternalFrame;
