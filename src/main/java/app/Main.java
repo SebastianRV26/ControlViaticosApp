@@ -1,5 +1,6 @@
 package app;
 
+import app.data.network.Api;
 import app.ui.main.MainFrame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,9 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             new MainFrame().setVisible(true);
         });
+
+        // A little trick to pre-initialize the retrofit instance
+        Api.getInstance();
     }
 
 }

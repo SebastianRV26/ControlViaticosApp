@@ -2,7 +2,6 @@ package app.ui.main;
 
 import app.ui.branchOffice.list.BranchOfficeListFrame;
 import app.ui.client.list.ClientListFrame;
-import app.ui.resource.list.ResourceListFrame;
 import app.ui.reason.list.ReasonListFrame;
 import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
@@ -11,6 +10,9 @@ import app.ui.cost.list.CostListFrame;
 import app.ui.resource.list.ResourceListFrame;
 import app.ui.vehicle.list.VehicleListFrame;
 import app.ui.supportType.list.SupportTypeListFrame;
+import java.beans.PropertyVetoException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JInternalFrame;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -80,9 +82,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         btnBranchOffice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/branch-office.png"))); // NOI18N
         btnBranchOffice.setText("Sucursal");
-        btnBranchOffice.setToolTipText("Sucursal");
         btnBranchOffice.setFocusable(false);
         btnBranchOffice.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBranchOffice.setToolTipText("Sucursal");
         btnBranchOffice.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnBranchOffice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -227,48 +229,63 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEventActionPerformed
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
-        openFrame(new ClientListFrame());
+        openFrame(ClientListFrame.class);
     }//GEN-LAST:event_btnCustomerActionPerformed
 
     private void btnBranchOfficeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBranchOfficeActionPerformed
-        openFrame(new BranchOfficeListFrame());
+        openFrame(BranchOfficeListFrame.class);
     }//GEN-LAST:event_btnBranchOfficeActionPerformed
 
     private void btnTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskActionPerformed
-        openFrame(new TaskListFrame());
+        openFrame(TaskListFrame.class);
     }//GEN-LAST:event_btnTaskActionPerformed
 
     private void btnTaskTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskTypeActionPerformed
-        openFrame(new TaskTypeListFrame());
+        openFrame(TaskTypeListFrame.class);
     }//GEN-LAST:event_btnTaskTypeActionPerformed
 
     private void btnReasonsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReasonsActionPerformed
-        openFrame(new ReasonListFrame());
+        openFrame(ReasonListFrame.class);
     }//GEN-LAST:event_btnReasonsActionPerformed
 
     private void btnSupportTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupportTypeActionPerformed
-        openFrame(new SupportTypeListFrame());
+        openFrame(SupportTypeListFrame.class);
     }//GEN-LAST:event_btnSupportTypeActionPerformed
 
     private void btnCostsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCostsActionPerformed
-        openFrame(new CostListFrame());
+        openFrame(CostListFrame.class);
     }//GEN-LAST:event_btnCostsActionPerformed
 
     private void btnResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResourcesActionPerformed
-        openFrame(new ResourceListFrame());
+        openFrame(ResourceListFrame.class);
     }//GEN-LAST:event_btnResourcesActionPerformed
 
     private void btnExpensesTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpensesTypeActionPerformed
-        openFrame(new ExpenseTypeListFrame());
+        openFrame(ExpenseTypeListFrame.class);
     }//GEN-LAST:event_btnExpensesTypeActionPerformed
 
     private void btnVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVehiclesActionPerformed
-        openFrame(new VehicleListFrame());
+        openFrame(VehicleListFrame.class);
     }//GEN-LAST:event_btnVehiclesActionPerformed
 
-    private void openFrame(JInternalFrame frame) {
-        desktopPane.add(frame);
-        frame.setVisible(true);
+    private void openFrame(Class frameClass) {
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            if (frameClass.isInstance(frame)) {
+                try {
+                    frame.setSelected(true);
+                } catch (PropertyVetoException ex) {
+                }
+                return;
+            }
+        }
+
+        JInternalFrame frame;
+        try {
+            frame = (JInternalFrame) frameClass.newInstance();
+            desktopPane.add(frame);
+            frame.setVisible(true);
+        } catch (InstantiationException | IllegalAccessException ex) {
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

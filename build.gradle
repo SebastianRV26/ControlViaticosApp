@@ -14,5 +14,10 @@ repositories {
 
 dependencies {
     implementation group: 'com.github.lgooddatepicker', name: 'LGoodDatePicker', version: '10.3.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation "io.reactivex.rxjava3:rxjava:3.0.4"
     testImplementation 'junit:junit:4.13'
 }

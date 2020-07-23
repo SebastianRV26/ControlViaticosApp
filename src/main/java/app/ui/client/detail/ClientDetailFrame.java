@@ -1,24 +1,39 @@
 package app.ui.client.detail;
 
-public class ClientDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.Client;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class ClientDetailFrame extends javax.swing.JInternalFrame
+        implements ClientDetailContract.View {
+
+    private ClientDetailPresenter<ClientDetailContract.View> presenter;
+    private Client client;
+    private DataChangedListener listener;
 
     /**
      * Creates new form ClientDetailFrame
      *
-     * @param clientId the id of the client to modify, -1 if we are adding a new
-     * client
+     * @param client the client to modify, null if we are adding a new client
      */
-    public ClientDetailFrame(int clientId) {
+    public ClientDetailFrame(Client client, DataChangedListener listener) {
+        initComponents();
+
+        this.client = client;
         // Means we are adding a client
-        if (clientId < 0) {
+        if (client == null) {
             setTitle("Agregar cliente");
         } else {
             setTitle("Modificar cliente");
+            txtSocialReason.setText(client.getRazonSocial());
+            txtTradeReason.setText(client.getRazonComercial());
         }
-        
-        initComponents();
+
+        presenter = new ClientDetailPresenter<>();
+        presenter.attachView(this);
+        this.listener = listener;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -41,9 +56,19 @@ public class ClientDetailFrame extends javax.swing.JInternalFrame {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
         btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,6 +113,38 @@ public class ClientDetailFrame extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // Check if we're adding or updating to call the correct method
+        if (client == null) {
+            presenter.addClient(txtSocialReason.getText(),
+                    txtTradeReason.getText());
+        } else {
+            presenter.updateClient(client.getId(), txtSocialReason.getText(),
+                    txtTradeReason.getText());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * This will be called if a client were added or updated successfully.
+     */
+    @Override
+    public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
