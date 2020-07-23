@@ -8,6 +8,7 @@ import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
 import app.ui.resource.list.ResourceListFrame;
+import app.ui.supplier.list.SupplierListFrame;
 import app.ui.vehicle.list.VehicleListFrame;
 import app.ui.supportType.list.SupportTypeListFrame;
 import java.beans.PropertyVetoException;
@@ -42,6 +43,7 @@ public class MainFrame extends javax.swing.JFrame {
         btnCosts = new javax.swing.JButton();
         btnResources = new javax.swing.JButton();
         btnExpensesType = new javax.swing.JButton();
+        btnSupplier = new javax.swing.JButton();
         btnVehicles = new javax.swing.JButton();
         desktopPane = new javax.swing.JDesktopPane();
 
@@ -190,6 +192,18 @@ public class MainFrame extends javax.swing.JFrame {
         });
         toolbar.add(btnExpensesType);
 
+        btnSupplier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/supplier.png"))); // NOI18N
+        btnSupplier.setText("Proveedor");
+        btnSupplier.setFocusable(false);
+        btnSupplier.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSupplier.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSupplierActionPerformed(evt);
+            }
+        });
+        toolbar.add(btnSupplier);
+
         btnVehicles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/car.png"))); // NOI18N
         btnVehicles.setText("Vehiculo");
         btnVehicles.setToolTipText("Vehículo");
@@ -268,6 +282,10 @@ public class MainFrame extends javax.swing.JFrame {
         openFrame(VehicleListFrame.class);
     }//GEN-LAST:event_btnVehiclesActionPerformed
 
+    private void btnSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSupplierActionPerformed
+        openFrame(SupplierListFrame.class);
+    }//GEN-LAST:event_btnSupplierActionPerformed
+
     private void openFrame(Class frameClass) {
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
             if (frameClass.isInstance(frame)) {
@@ -296,6 +314,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnExpensesType;
     private javax.swing.JButton btnReasons;
     private javax.swing.JButton btnResources;
+    private javax.swing.JButton btnSupplier;
     private javax.swing.JButton btnSupportType;
     private javax.swing.JButton btnTask;
     private javax.swing.JButton btnTaskType;
