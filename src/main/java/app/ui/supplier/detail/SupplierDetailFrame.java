@@ -1,22 +1,36 @@
 package app.ui.supplier.detail;
 
-public class SupplierDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.Supplier;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class SupplierDetailFrame extends javax.swing.JInternalFrame
+        implements SupplierDetailContract.View {
+
+    private SupplierDetailPresenter<SupplierDetailContract.View> presenter;
+    private Supplier supplier;
+    private DataChangedListener listener;
 
     /**
      * Creates new form SupplierDetailFrame
      *
-     * @param supplierId the id of the supplier to modify, -1 if we are adding a
-     * new cost
+     * @param supplier the supplier to modify, null if we are adding a new
+     * supplier
      */
-    public SupplierDetailFrame(int supplierId) {
+    public SupplierDetailFrame(Supplier supplier, DataChangedListener listener) {
         // Means we are adding a supplier
-        if (supplierId < 0) {
+        initComponents();
+        this.supplier = supplier;
+        if (supplier == null) {
             setTitle("Agregar proveedor");
         } else {
-            setTitle("Modificar centro de costo");
+            setTitle("Modificar proveedor");
+            txtDescription.setText(supplier.getDescripcion());
         }
 
-        initComponents();
+        presenter = new SupplierDetailPresenter<>();
+        presenter.attachView(this);
+        this.listener = listener;
     }
 
     @SuppressWarnings("unchecked")
@@ -36,9 +50,19 @@ public class SupplierDetailFrame extends javax.swing.JInternalFrame {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
         btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -74,6 +98,37 @@ public class SupplierDetailFrame extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // Check if we're adding or updating to call the correct method
+        if (supplier == null) {
+            presenter.addSupplier(txtDescription.getText());
+        } else {
+            presenter.updateSupplier(supplier.getId(), txtDescription.getText());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * This will be called if a client were added or updated successfully.
+     */
+    @Override
+    public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

@@ -1,16 +1,28 @@
 package app.ui.supplier.list;
 
+import app.data.model.Supplier;
 import app.ui.supplier.detail.SupplierDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class SupplierListFrame extends javax.swing.JInternalFrame {
+public class SupplierListFrame extends javax.swing.JInternalFrame
+        implements SupplierListContract.View, DataChangedListener {
+
+    private SupplierListPresenter presenter = new SupplierListPresenter();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form SupplierListFrame
      */
     public SupplierListFrame() {
         initComponents();
+        presenter.attachView(this);
+        presenter.loadSuppliers();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,9 +30,9 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         lblSearch = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblSuppliers = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDisable = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
@@ -32,7 +44,7 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblSuppliers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null},
                 {null},
@@ -43,7 +55,7 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
                 "Descripción"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblSuppliers);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEdit.setText("Modificar");
@@ -80,7 +92,7 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(txtSearch))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 13, Short.MAX_VALUE)
                         .addComponent(btnAdd)
@@ -97,7 +109,7 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblSearch)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -112,33 +124,106 @@ public class SupplierListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a supplier is selected
-        JInternalFrame frame = new SupplierDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        if (tblSuppliers.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblSuppliers.convertRowIndexToModel(tblSuppliers.getSelectedRow());
+            Supplier supplier = ((SupplierTableModel) tblSuppliers.getModel()).getValue(index);
+
+            JInternalFrame frame = new SupplierDetailFrame(supplier, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un proveedor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a supplier is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar el proveedor?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        if (tblSuppliers.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblSuppliers.convertRowIndexToModel(tblSuppliers.getSelectedRow());
+            Supplier supplier = ((SupplierTableModel) tblSuppliers.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el proveedor?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableSupplier(supplier.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un proveedor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new SupplierDetailFrame(-1);
+        JInternalFrame frame = new SupplierDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Called when the presenter finished to retrieve the supplier from the
+     * database.
+     *
+     * @param suppliers the list of suppliers
+     */
+    @Override
+    public void showSuppliers(List<Supplier> suppliers) {
+        tblSuppliers.setModel(new SupplierTableModel(suppliers));
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblSuppliers.getModel());
+        tblSuppliers.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadSuppliers();
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadSuppliers();
+    }
+
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), 0));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDisable;
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblSearch;
+    private javax.swing.JTable tblSuppliers;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

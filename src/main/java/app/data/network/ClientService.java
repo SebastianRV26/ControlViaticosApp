@@ -10,7 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
-public interface UserService {
+public interface ClientService {
 
     @POST("/clients/addClient")
     Completable addClient(@Body HashMap<String, Object> request);

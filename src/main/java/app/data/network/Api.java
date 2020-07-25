@@ -14,7 +14,8 @@ public class Api {
     private Retrofit retrofit;
 
     // Services
-    private UserService userService;
+    private ClientService clientService;
+    private SupplierService supplierService;
 
     /**
      * @return the unique instance of the API
@@ -36,11 +37,16 @@ public class Api {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
 
-        userService = retrofit.create(UserService.class);
+        clientService = retrofit.create(ClientService.class);
+        supplierService = retrofit.create(SupplierService.class);
     }
 
     // Services getters
-    public UserService getUserService() {
-        return userService;
+    public ClientService getClientService() {
+        return clientService;
+    }
+
+    public SupplierService getSupplierService() {
+        return supplierService;
     }
 }

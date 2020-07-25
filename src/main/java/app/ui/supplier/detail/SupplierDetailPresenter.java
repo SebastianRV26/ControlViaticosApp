@@ -1,4 +1,4 @@
-package app.ui.client.detail;
+package app.ui.supplier.detail;
 
 import app.data.model.StatusResponse;
 import app.data.network.Api;
@@ -8,37 +8,32 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.util.HashMap;
 
 /**
- * The presenter class responsable for the communication between the view and
+ * The presenter class responsible for the communication between the view and
  * the API.
  *
  * @param <V> the view attached to this presenter
  */
-public class ClientDetailPresenter<V extends ClientDetailContract.View>
-        extends BasePresenter<V> implements ClientDetailContract.Presenter<V> {
+public class SupplierDetailPresenter<V extends SupplierDetailContract.View>
+        extends BasePresenter<V> implements SupplierDetailContract.Presenter<V> {
 
     /**
-     * Called everytime the view wants to add a new client.
+     * Called everytime the view wants to add a new supplier.
      *
-     * @param socialReason client's social reason
-     * @param tradeReason client's trade reason
+     * @param description descripción
      */
     @Override
-    public void addClient(String socialReason, String tradeReason) {
+    public void addSupplier(String description) {
         // Let's validate all the fields
-        if (Utils.textIsNullOrEmpty(socialReason)) {
-            getView().onError("La razón social no puede estar vacía.");
-            return;
-        } else if (Utils.textIsNullOrEmpty(tradeReason)) {
-            getView().onError("La razón comercial no puede estar vacía.");
+        if (Utils.textIsNullOrEmpty(description)) {
+            getView().onError("La descripción no puede estar vacía.");
             return;
         }
 
         // Create the request data
         HashMap<String, Object> request = new HashMap<>(2);
-        request.put("razonSocial", socialReason.trim());
-        request.put("razonComercial", tradeReason.trim());
+        request.put("descripcion", description.trim());
 
-        Api.getInstance().getClientService().addClient(request)
+        Api.getInstance().getSupplierService().addSupplier(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
@@ -50,7 +45,7 @@ public class ClientDetailPresenter<V extends ClientDetailContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("Ya hay un cliente con esos"
+                            getView().onError("Ya hay un proveedor con esos"
                                     + " datos.");
                         }
                     } else {
@@ -61,30 +56,23 @@ public class ClientDetailPresenter<V extends ClientDetailContract.View>
     }
 
     /**
-     * Called everytime the view wants to add a new client.
+     * Called everytime the view wants to add a new supplier.
      *
-     * @param id client's id
-     * @param socialReason client's social reason
-     * @param tradeReason client's trade reason
+     * @param id supplier's id
+     * @param description descripcion
      */
     @Override
-    public void updateClient(int id, String socialReason, String tradeReason) {
+    public void updateSupplier(int id, String description) {
         // Let's validate all the fields
-        if (Utils.textIsNullOrEmpty(socialReason)) {
-            getView().onError("La razón social no puede estar vacía.");
-            return;
-        } else if (Utils.textIsNullOrEmpty(tradeReason)) {
-            getView().onError("La razón comercial no puede estar vacía.");
+        if (Utils.textIsNullOrEmpty(description)) {
+            getView().onError("La descripcion no puede estar vacía.");
             return;
         }
-
         // Create the request data
-        HashMap<String, Object> request = new HashMap<>(3);
-        request.put("clientId", id);
-        request.put("razonSocial", socialReason.trim());
-        request.put("razonComercial", tradeReason.trim());
-
-        Api.getInstance().getClientService().updateClient(request)
+        HashMap<String, Object> request = new HashMap<>(2);
+        request.put("id", id);
+        request.put("descripcion", description.trim());
+        Api.getInstance().getSupplierService().updateSupplier(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
@@ -96,9 +84,9 @@ public class ClientDetailPresenter<V extends ClientDetailContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("El cliente ya no existe.");
+                            getView().onError("El proveedor ya no existe.");
                         } else if (response.getStatusCode() == 2) {
-                            getView().onError("Ya existe un cliente con esos "
+                            getView().onError("Ya existe un proveedor con esos "
                                     + "datos.");
                         }
                     } else {
