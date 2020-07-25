@@ -1,6 +1,11 @@
 package app.ui.resource.detail;
 
-public class ResourceDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.Resource;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class ResourceDetailFrame extends javax.swing.JInternalFrame
+        implements ResourceDetailContract.View {
 
     /**
      * Creates new form ResourceDetailFrame
@@ -8,15 +13,27 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
      * @param resourceId the id of the resource to modify, -1 if we are adding a
      * new resource
      */
-    public ResourceDetailFrame(int resourceId) {
-        // Means we are adding a resourse
-        if (resourceId < 0) {
+    private ResourceDetailPresenter<ResourceDetailContract.View> presenter;
+    private Resource resource;
+    private DataChangedListener listener;
+
+    public ResourceDetailFrame(Resource resource, DataChangedListener listener) {
+        initComponents();
+
+        this.resource = resource;
+        // Means we are adding a resource
+        if (resource == null) {
             setTitle("Agregar recurso");
         } else {
             setTitle("Modificar recurso");
+            txtResponsable.setText(resource.getResponsable());
+            txtDescripcion.setText(resource.getDescripcion());
         }
 
-        initComponents();
+        presenter = new ResourceDetailPresenter<>();
+        presenter.attachView(this);
+        this.listener = listener;
+        this.resource = resource;
     }
 
     @SuppressWarnings("unchecked")
@@ -25,8 +42,8 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
 
         lblSocialReason = new javax.swing.JLabel();
         lblTradeReason = new javax.swing.JLabel();
-        txtSocialReason = new javax.swing.JTextField();
-        txtTradeReason = new javax.swing.JTextField();
+        txtResponsable = new javax.swing.JTextField();
+        txtDescripcion = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
 
@@ -39,17 +56,21 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
         lblTradeReason.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/trade.png"))); // NOI18N
         lblTradeReason.setText("Descripción");
 
-        txtSocialReason.addActionListener(new java.awt.event.ActionListener() {
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
+        btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSocialReasonActionPerformed(evt);
+                btnSaveActionPerformed(evt);
             }
         });
 
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
-        btnSave.setText("Guardar");
-
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -69,8 +90,8 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
                             .addComponent(lblSocialReason))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtSocialReason)
-                            .addComponent(txtTradeReason))))
+                            .addComponent(txtResponsable)
+                            .addComponent(txtDescripcion))))
                 .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
@@ -79,11 +100,11 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblSocialReason)
-                    .addComponent(txtSocialReason, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtResponsable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTradeReason)
-                    .addComponent(txtTradeReason, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancel)
@@ -94,17 +115,43 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtSocialReasonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSocialReasonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSocialReasonActionPerformed
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // Check if we're adding or updating to call the correct method
+        if (resource == null) {
+            presenter.addResource(txtResponsable.getText(),
+                    txtDescripcion.getText());
+        } else {
+            presenter.updateResource(resource.getId(), txtResponsable.getText(),
+                    txtDescripcion.getText());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    @Override
+    public void onSuccess() {
+        // Update the resource list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel lblSocialReason;
     private javax.swing.JLabel lblTradeReason;
-    private javax.swing.JTextField txtSocialReason;
-    private javax.swing.JTextField txtTradeReason;
+    private javax.swing.JTextField txtDescripcion;
+    private javax.swing.JTextField txtResponsable;
     // End of variables declaration//GEN-END:variables
+
 }
