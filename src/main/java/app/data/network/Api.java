@@ -14,6 +14,7 @@ public class Api {
     private Retrofit retrofit;
 
     // Services
+    private SupportTypeService supportTypeService;
     private ClientService clientService;
     private SupplierService supplierService;
 
@@ -37,6 +38,7 @@ public class Api {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
 
+        supportTypeService = retrofit.create(SupportTypeService.class);
         clientService = retrofit.create(ClientService.class);
         supplierService = retrofit.create(SupplierService.class);
     }
@@ -48,5 +50,9 @@ public class Api {
 
     public SupplierService getSupplierService() {
         return supplierService;
+    }
+    
+    public SupportTypeService getSupportTypeService() {
+        return supportTypeService;
     }
 }

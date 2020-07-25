@@ -1,22 +1,36 @@
 package app.ui.supportType.detail;
 
-public class SupportTypeDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.SupportType;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class SupportTypeDetailFrame extends javax.swing.JInternalFrame
+        implements SupportTypeDetailContract.View {
+
+    private SupportTypeDetailPresenter<SupportTypeDetailContract.View> presenter;
+    private SupportType supportType;
+    private DataChangedListener listener;
 
     /**
      * Creates new form SupportTypeDetailFrame
      *
-     * @param supportTypeId the id of the support type to modify, -1 if we are adding a new
-     * support type
+     * @param supportType the support Type to modify, null if we are adding a
+     * new support tType
      */
-    public SupportTypeDetailFrame(int supportTypeId) {
+    public SupportTypeDetailFrame(SupportType supportType, DataChangedListener listener) {
+        initComponents();
         // Means we are adding a support type
-        if (supportTypeId < 0) {
+        if (supportType == null) {
             setTitle("Agregar tipo de soporte");
         } else {
             setTitle("Modificar tipo de soporte");
+            txtDescription.setText(supportType.getDescripcion());
         }
 
-        initComponents();
+        presenter = new SupportTypeDetailPresenter<>();
+        presenter.attachView(this);
+        this.listener = listener;
+        this.supportType = supportType;
     }
 
     @SuppressWarnings("unchecked")
@@ -86,12 +100,35 @@ public class SupportTypeDetailFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-
+        // Check if we're adding or updating to call the correct method
+        if (supportType == null) {
+            presenter.addSupportType(txtDescription.getText());
+        } else {
+            presenter.updateSupportType(supportType.getId(), txtDescription.getText());
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
+        this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * This will be called if a client were added or updated successfully.
+     */
+    @Override
+    public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

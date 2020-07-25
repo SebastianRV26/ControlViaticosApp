@@ -1,16 +1,28 @@
 package app.ui.supportType.list;
 
+import app.data.model.SupportType;
 import app.ui.supportType.detail.SupportTypeDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class SupportTypeListFrame extends javax.swing.JInternalFrame {
+public class SupportTypeListFrame extends javax.swing.JInternalFrame
+        implements SupportTypeListContract.View, DataChangedListener {
+
+    private SupportTypeListPresenter presenter = new SupportTypeListPresenter<>();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form SupportTypeListFrame
      */
     public SupportTypeListFrame() {
         initComponents();
+        presenter.attachView(this);
+        presenter.loadSupportTypes();
     }
 
     @SuppressWarnings("unchecked")
@@ -20,7 +32,7 @@ public class SupportTypeListFrame extends javax.swing.JInternalFrame {
         lblSearch = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClients = new javax.swing.JTable();
+        tblSupportType = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDisable = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
@@ -32,26 +44,7 @@ public class SupportTypeListFrame extends javax.swing.JInternalFrame {
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Descripción"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblClients);
+        jScrollPane1.setViewportView(tblSupportType);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEdit.setText("Modificar");
@@ -120,32 +113,114 @@ public class SupportTypeListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        JInternalFrame frame = new SupportTypeDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+
+        // Checks if there is a selected item in the table
+        if (tblSupportType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblSupportType.convertRowIndexToModel(tblSupportType.getSelectedRow());
+            SupportType supportType = ((SupportTypeTableModel) tblSupportType.getModel()).getValue(index);
+
+            JInternalFrame frame = new SupportTypeDetailFrame(supportType, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo soporte",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
 
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar este tipo de soporte?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblSupportType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblSupportType.convertRowIndexToModel(tblSupportType.getSelectedRow());
+            SupportType supportType = ((SupportTypeTableModel) tblSupportType.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el tipo soporte?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableSupportType(supportType.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo soporte",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new SupportTypeDetailFrame(-1);
+        JInternalFrame frame = new SupportTypeDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Called when the presenter finished to retrieve the supportType from the
+     * database.
+     *
+     * @param supportTypes the list of supportTypes
+     */
+    @Override
+    public void showSupportTypes(List<SupportType> supportTypes) {
+        tblSupportType.setModel(new SupportTypeTableModel(supportTypes));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblSupportType.getModel());
+        tblSupportType.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadSupportTypes();
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadSupportTypes();
+    }
+
+    /**
+     * Applies the filter to the table.
+     */
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), 0));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDisable;
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblSearch;
-    private javax.swing.JTable tblClients;
+    private javax.swing.JTable tblSupportType;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
