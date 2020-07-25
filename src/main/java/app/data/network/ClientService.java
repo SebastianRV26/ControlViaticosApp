@@ -1,6 +1,7 @@
 package app.data.network;
 
 import app.data.model.Client;
+import app.data.model.Reason;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import java.util.HashMap;

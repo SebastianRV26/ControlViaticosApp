@@ -1,16 +1,28 @@
 package app.ui.reason.list;
 
+import app.data.model.Reason;
 import app.ui.reason.detail.ReasonDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class ReasonListFrame extends javax.swing.JInternalFrame {
+public class ReasonListFrame extends javax.swing.JInternalFrame
+        implements ReasonListContract.View, DataChangedListener {
+
+    private ReasonListPresenter presenter = new ReasonListPresenter();
+    private TableRowSorter trsFilter;
 
     /**
-     * Creates new form ClientListFrame
+     * Creates new form ReasonListFrame
      */
     public ReasonListFrame() {
         initComponents();
+        presenter.attachView(this);
+        presenter.loadReasons();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,7 +30,7 @@ public class ReasonListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClients = new javax.swing.JTable();
+        tblReasons = new javax.swing.JTable();
         lblSearch = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnEdit = new javax.swing.JButton();
@@ -29,26 +41,7 @@ public class ReasonListFrame extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setTitle("Motivo");
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Motivo"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblClients);
+        jScrollPane1.setViewportView(tblReasons);
 
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
@@ -120,26 +113,93 @@ public class ReasonListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new ReasonDetailFrame(-1);
+        JInternalFrame frame = new ReasonDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a client is selected
-        JInternalFrame frame = new ReasonDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblReasons.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblReasons.convertRowIndexToModel(tblReasons.getSelectedRow());
+            Reason reason = ((ReasonTableModel) tblReasons.getModel()).getValue(index);
+
+            JInternalFrame frame = new ReasonDetailFrame(reason, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un motivo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a client is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar el motivo?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblReasons.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblReasons.convertRowIndexToModel(tblReasons.getSelectedRow());
+            Reason reason = ((ReasonTableModel) tblReasons.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el motivo?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableReason(reason.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un motivo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
+    @Override
+    public void showReasons(List<Reason> reasons) {
+        tblReasons.setModel(new ReasonTableModel(reasons));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblReasons.getModel());
+        tblReasons.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadReasons();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public void onDataChanged() {
+        presenter.loadReasons();
+    }
+
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText()));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -147,7 +207,8 @@ public class ReasonListFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblSearch;
-    private javax.swing.JTable tblClients;
+    private javax.swing.JTable tblReasons;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
 }
