@@ -21,7 +21,7 @@ public class SupplierListPresenter<V extends SupplierListContract.View>
      */
     @Override
     public void loadSuppliers() {
-        Api.getInstance().getSupplierService().getSupplier()
+        Api.getInstance().getSupplierService().getSuppliers()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe((suppliers) -> {

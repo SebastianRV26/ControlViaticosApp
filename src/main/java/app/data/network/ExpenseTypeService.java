@@ -12,12 +12,12 @@ import retrofit2.http.PUT;
 
 public interface ExpenseTypeService {
 
-    @POST("/viaticumType/AddViaticumType")
+    @POST("/expenseTypes/AddExpenseType")
     Completable addExpenseType(@Body HashMap<String, Object> request);
 
-    @GET("/viaticumType/GetViaticumType")
-    Single<List<ExpenseType>> getExpenseType();
+    @GET("/expenseTypes/GetExpenseTypes")
+    Single<List<ExpenseType>> getExpenseTypes();
 
-    @PUT("/viaticumType/UpdateViaticumType")
+    @PUT("/expenseTypes/UpdateExpenseType")
     Completable updateExpenseType(@Body HashMap<String, Object> request);
 }

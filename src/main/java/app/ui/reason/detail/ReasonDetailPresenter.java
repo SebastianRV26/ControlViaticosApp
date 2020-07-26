@@ -45,7 +45,7 @@ public class ReasonDetailPresenter<V extends ReasonDetailContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("Ya hay una razón con esos"
+                            getView().onError("Ya hay un motivo con esos"
                                     + " datos.");
                         }
                     } else {
@@ -86,9 +86,9 @@ public class ReasonDetailPresenter<V extends ReasonDetailContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("La razón ya no existe.");
+                            getView().onError("El motivo ya no existe.");
                         } else if (response.getStatusCode() == 2) {
-                            getView().onError("Ya existe una razón con esos "
+                            getView().onError("Ya existe un motivo con esos "
                                     + "datos.");
                         }
                     } else {

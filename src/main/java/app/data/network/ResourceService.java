@@ -12,12 +12,12 @@ import retrofit2.http.PUT;
 
 public interface ResourceService {
 
-    @POST("/resource/AddResource")
+    @POST("/resources/AddResource")
     Completable addResource(@Body HashMap<String, Object> request);
 
-    @GET("/resource/GetResource")
-    Single<List<Resource>> getResource();
+    @GET("/resources/GetResources")
+    Single<List<Resource>> getResources();
 
-    @PUT("/resource/UpdateResource")
+    @PUT("/resources/UpdateResource")
     Completable updateResource(@Body HashMap<String, Object> request);
 }

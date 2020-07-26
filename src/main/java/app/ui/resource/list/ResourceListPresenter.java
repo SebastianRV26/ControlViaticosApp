@@ -21,7 +21,7 @@ public class ResourceListPresenter<V extends ResourceListContract.View>
      */
     @Override
     public void loadResource() {
-        Api.getInstance().getResourceService().getResource()
+        Api.getInstance().getResourceService().getResources()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe((resources) -> {

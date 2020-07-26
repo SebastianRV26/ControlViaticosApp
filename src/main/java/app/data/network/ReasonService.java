@@ -12,12 +12,12 @@ import retrofit2.http.PUT;
 
 public interface ReasonService {
 
-    @POST("/reason/AddReason")
+    @POST("/reasons/AddReason")
     Completable addReason(@Body HashMap<String, Object> request);
 
-    @GET("/reason/GetReason")
-    Single<List<Reason>> getReason();
+    @GET("/reasons/GetReasons")
+    Single<List<Reason>> getReasons();
 
-    @PUT("/reason/UpdateReason")
+    @PUT("/reasons/UpdateReason")
     Completable updateReason(@Body HashMap<String, Object> request);
 }

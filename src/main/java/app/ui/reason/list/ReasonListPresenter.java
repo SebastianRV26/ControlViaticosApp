@@ -21,7 +21,7 @@ public class ReasonListPresenter<V extends ReasonListContract.View>
      */
     @Override
     public void loadReasons() {
-        Api.getInstance().getReasonService().getReason()
+        Api.getInstance().getReasonService().getReasons()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe((reasons) -> {
@@ -57,7 +57,7 @@ public class ReasonListPresenter<V extends ReasonListContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("La razon ya no existe.");
+                            getView().onError("El motivo ya no existe.");
                         }
                     } else {
                         getView().onError("Error de conexión."

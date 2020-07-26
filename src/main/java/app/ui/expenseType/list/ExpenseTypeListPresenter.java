@@ -21,7 +21,7 @@ public class ExpenseTypeListPresenter<V extends ExpenseTypeListContract.View>
      */
     @Override
     public void loadExpenseTypes() {
-        Api.getInstance().getExpenseTypeService().getExpenseType()
+        Api.getInstance().getExpenseTypeService().getExpenseTypes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe((expenseTypes) -> {

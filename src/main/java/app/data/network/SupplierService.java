@@ -15,8 +15,8 @@ public interface SupplierService {
     @POST("/suppliers/addSupplier")
     Completable addSupplier(@Body HashMap<String, Object> request);
 
-    @GET("/suppliers/getSupplier")
-    Single<List<Supplier>> getSupplier();
+    @GET("/suppliers/getSuppliers")
+    Single<List<Supplier>> getSuppliers();
 
     @PUT("/suppliers/updateSupplier")
     Completable updateSupplier(@Body HashMap<String, Object> request);

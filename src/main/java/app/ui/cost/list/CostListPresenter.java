@@ -57,7 +57,8 @@ public class CostListPresenter<V extends CostListContract.View>
                             = Utils.parseStatusResponse(throwable);
                     if (response != null) {
                         if (response.getStatusCode() == 1) {
-                            getView().onError("El costo ya no existe.");
+                            getView().onError("El centro de costo ya no"
+                                    + " existe.");
                         }
                     } else {
                         getView().onError("Error de conexión."
