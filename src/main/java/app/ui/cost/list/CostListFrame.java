@@ -1,16 +1,29 @@
 package app.ui.cost.list;
 
+import app.data.model.Cost;
 import app.ui.cost.detail.CostDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class CostListFrame extends javax.swing.JInternalFrame {
+public class CostListFrame extends javax.swing.JInternalFrame
+        implements CostListContract.View, DataChangedListener {
+
+    private CostListPresenter presenter = new CostListPresenter();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form CostListFrame
      */
     public CostListFrame() {
         initComponents();
+
+        presenter.attachView(this);
+        presenter.loadCosts();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,9 +31,9 @@ public class CostListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         lblSearch = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblCosts = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDisable = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
@@ -32,18 +45,7 @@ public class CostListFrame extends javax.swing.JInternalFrame {
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Descripción"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblCosts);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEdit.setText("Modificar");
@@ -80,7 +82,7 @@ public class CostListFrame extends javax.swing.JInternalFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(txtSearch))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnAdd)
@@ -97,7 +99,7 @@ public class CostListFrame extends javax.swing.JInternalFrame {
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblSearch)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -112,33 +114,111 @@ public class CostListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a cost is selected
-        JInternalFrame frame = new CostDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblCosts.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblCosts.convertRowIndexToModel(tblCosts.getSelectedRow());
+            Cost cost = ((CostTableModel) tblCosts.getModel()).getValue(index);
+
+            JInternalFrame frame = new CostDetailFrame(cost, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un centro de costo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a cost is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar el centro de costo?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblCosts.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblCosts.convertRowIndexToModel(tblCosts.getSelectedRow());
+            Cost cost = ((CostTableModel) tblCosts.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el centro de costo?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableCost(cost.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un cliente",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new CostDetailFrame(-1);
+        JInternalFrame frame = new CostDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    /**
+     * Called when the presenter finished to retrieve the costs from the
+     * database.
+     *
+     * @param costs the list of clients
+     */
+    @Override
+    public void showCosts(List<Cost> costs) {
+        tblCosts.setModel(new CostTableModel(costs));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblCosts.getModel());
+        tblCosts.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadCosts();
+    }
+
+    @Override
+    public void onError(String message) {
+        presenter.loadCosts();
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadCosts();
+    }
+
+    /**
+     * Applies the filter to the table.
+     */
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), 0));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDisable;
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblSearch;
+    private javax.swing.JTable tblCosts;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
 }

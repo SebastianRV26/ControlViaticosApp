@@ -15,6 +15,8 @@ public class ClientDetailFrame extends javax.swing.JInternalFrame
      * Creates new form ClientDetailFrame
      *
      * @param client the client to modify, null if we are adding a new client
+     * @param listener allows the list view to know when a client was added or
+     * modified
      */
     public ClientDetailFrame(Client client, DataChangedListener listener) {
         initComponents();
@@ -137,7 +139,7 @@ public class ClientDetailFrame extends javax.swing.JInternalFrame
     }
 
     /**
-     * This will be called if a client were added or updated successfully.
+     * This will be called if a client was added or updated successfully.
      */
     @Override
     public void onSuccess() {

@@ -1,22 +1,39 @@
 package app.ui.cost.detail;
 
-public class CostDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.Cost;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class CostDetailFrame extends javax.swing.JInternalFrame
+        implements CostDetailContract.View {
+
+    private CostDetailPresenter<CostDetailContract.View> presenter
+            = new CostDetailPresenter<>();
+    private Cost cost;
+    private DataChangedListener listener;
 
     /**
      * Creates new form CostDetailFrame
      *
-     * @param costId the id of the cost to modify, -1 if we are adding a new
-     * cost
+     * @param cost the cost to modify, null if we are adding a new cost
+     * @param listener allows the list view to know when a cost was added or
+     * modified
      */
-    public CostDetailFrame(int costId) {
+    public CostDetailFrame(Cost cost, DataChangedListener listener) {
+        this.cost = cost;
+        this.listener = listener;
+
+        initComponents();
+
         // Means we are adding a client
-        if (costId < 0) {
+        if (cost == null) {
             setTitle("Agregar centro de costo");
         } else {
             setTitle("Modificar centro de costo");
+            txtDescription.setText(cost.getDescription());
         }
 
-        initComponents();
+        presenter.attachView(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -36,9 +53,19 @@ public class CostDetailFrame extends javax.swing.JInternalFrame {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
         btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -75,6 +102,36 @@ public class CostDetailFrame extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // Check if we're adding or updating to call the correct method
+        if (cost == null) {
+            presenter.addCost(txtDescription.getText());
+        } else {
+            presenter.updateCost(cost.getId(), txtDescription.getText());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    /**
+     * This will be called if a cost was added or updated successfully.
+     */
+    @Override
+    public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
@@ -82,4 +139,5 @@ public class CostDetailFrame extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblDescription;
     private javax.swing.JTextField txtDescription;
     // End of variables declaration//GEN-END:variables
+
 }
