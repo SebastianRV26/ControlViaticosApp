@@ -7,13 +7,12 @@ import app.ui.expenseType.list.ExpenseTypeListFrame;
 import app.ui.taskType.list.TaskTypeListFrame;
 import app.ui.task.list.TaskListFrame;
 import app.ui.cost.list.CostListFrame;
+import app.ui.event.list.EventListFrame;
 import app.ui.resource.list.ResourceListFrame;
 import app.ui.supplier.list.SupplierListFrame;
 import app.ui.vehicle.list.VehicleListFrame;
 import app.ui.supportType.list.SupportTypeListFrame;
 import java.beans.PropertyVetoException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JInternalFrame;
 
 public class MainFrame extends javax.swing.JFrame {
@@ -239,7 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEventActionPerformed
-
+        openFrame(EventListFrame.class);
     }//GEN-LAST:event_btnEventActionPerformed
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
