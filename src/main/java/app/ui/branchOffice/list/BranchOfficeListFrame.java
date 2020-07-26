@@ -1,16 +1,29 @@
 package app.ui.branchOffice.list;
 
+import app.data.model.BranchOffice;
 import app.ui.branchOffice.detail.BranchOfficeDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class BranchOfficeListFrame extends javax.swing.JInternalFrame {
+public class BranchOfficeListFrame extends javax.swing.JInternalFrame
+        implements BranchOfficeListContract.View, DataChangedListener {
+
+    private BranchOfficeListPresenter presenter = new BranchOfficeListPresenter<>();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form BranchOfficeListFrame
      */
     public BranchOfficeListFrame() {
         initComponents();
+
+        presenter.attachView(this);
+        presenter.loadBranchOffices();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,12 +31,14 @@ public class BranchOfficeListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         lblSearch = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblBranchOffices = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDisable = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
+        lblFilter = new javax.swing.JLabel();
+        cbFilter = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setIconifiable(true);
@@ -32,18 +47,7 @@ public class BranchOfficeListFrame extends javax.swing.JInternalFrame {
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Descripción"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblBranchOffices);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEdit.setText("Modificar");
@@ -69,35 +73,53 @@ public class BranchOfficeListFrame extends javax.swing.JInternalFrame {
             }
         });
 
+        lblFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter.png"))); // NOI18N
+        lblFilter.setText("Filtro:");
+
+        cbFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sucursal", "Cliente" }));
+        cbFilter.setMinimumSize(new java.awt.Dimension(16, 20));
+        cbFilter.setPreferredSize(new java.awt.Dimension(16, 20));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 33, Short.MAX_VALUE)
+                                .addComponent(btnAdd)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEdit)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDisable)
+                                .addGap(0, 33, Short.MAX_VALUE)))
+                        .addGap(20, 20, 20))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(lblSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnAdd)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblFilter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDisable)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(20, 20, 20))
+                        .addComponent(cbFilter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblSearch)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblFilter)
+                        .addComponent(cbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblSearch)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -113,32 +135,114 @@ public class BranchOfficeListFrame extends javax.swing.JInternalFrame {
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
 
-        JInternalFrame frame = new BranchOfficeDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        if (tblBranchOffices.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblBranchOffices.convertRowIndexToModel(tblBranchOffices.getSelectedRow());
+            BranchOffice branchOffice = ((BranchOfficeTableModel) tblBranchOffices.getModel()).getValue(index);
+
+            JInternalFrame frame = new BranchOfficeDetailFrame(branchOffice, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar una sucursal",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
+        // Checks if there is a selected item in the table
+        if (tblBranchOffices.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblBranchOffices.convertRowIndexToModel(tblBranchOffices.getSelectedRow());
+            BranchOffice branchOffice = ((BranchOfficeTableModel) tblBranchOffices.getModel()).getValue(index);
 
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar la sucursal?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar la sucursal?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableBranchOffice(branchOffice.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar una sucursal",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new BranchOfficeDetailFrame(-1);
+        JInternalFrame frame = new BranchOfficeDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Called when the presenter finished to retrieve the client from the
+     * database.
+     *
+     * @param branchOffices the list of branch Offices
+     */
+    @Override
+    public void showBranchOffices(List<BranchOffice> branchOffices) {
+        tblBranchOffices.setModel(new BranchOfficeTableModel(branchOffices));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblBranchOffices.getModel());
+        tblBranchOffices.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadBranchOffices();
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadBranchOffices();
+    }
+
+    /**
+     * Applies the filter to the table.
+     */
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), cbFilter.getSelectedIndex()));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDisable;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JComboBox<String> cbFilter;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblFilter;
     private javax.swing.JLabel lblSearch;
+    private javax.swing.JTable tblBranchOffices;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
