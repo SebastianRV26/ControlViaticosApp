@@ -21,6 +21,7 @@ public class Api {
     private ClientService clientService;
     private SupplierService supplierService;
     private CostService costService;
+    private ExpenseTypeService expenseTypeService;
 
     /**
      * @return the unique instance of the API
@@ -49,6 +50,7 @@ public class Api {
         clientService = retrofit.create(ClientService.class);
         supplierService = retrofit.create(SupplierService.class);
         costService = retrofit.create(CostService.class);
+        expenseTypeService = retrofit.create(ExpenseTypeService.class);
     }
 
     // Services getters
@@ -79,4 +81,9 @@ public class Api {
     public CostService getCostService() {
         return costService;
     }
+
+    public ExpenseTypeService getExpenseTypeService() {
+        return expenseTypeService;
+    }
+
 }

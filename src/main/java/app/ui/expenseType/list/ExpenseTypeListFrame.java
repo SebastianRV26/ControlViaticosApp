@@ -1,16 +1,28 @@
 package app.ui.expenseType.list;
 
+import app.data.model.ExpenseType;
 import app.ui.expenseType.detail.ExpenseTypeDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class ExpenseTypeListFrame extends javax.swing.JInternalFrame {
+public class ExpenseTypeListFrame extends javax.swing.JInternalFrame
+        implements ExpenseTypeListContract.View, DataChangedListener {
 
     /**
      * Creates new form ExpenseTypeListFrame
      */
+    private ExpenseTypeListPresenter presenter = new ExpenseTypeListPresenter();
+    private TableRowSorter trsFilter;
+
     public ExpenseTypeListFrame() {
         initComponents();
+        presenter.attachView(this);
+        presenter.loadExpenseTypes();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,7 +30,7 @@ public class ExpenseTypeListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClients = new javax.swing.JTable();
+        tblExpenseType = new javax.swing.JTable();
         lblSearch = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnEdit = new javax.swing.JButton();
@@ -29,26 +41,7 @@ public class ExpenseTypeListFrame extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setTitle("Tipo viático");
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Descripción"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblClients);
+        jScrollPane1.setViewportView(tblExpenseType);
 
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
@@ -120,25 +113,93 @@ public class ExpenseTypeListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new ExpenseTypeDetailFrame(-1);
+        JInternalFrame frame = new ExpenseTypeDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a expense type is selected
-        JInternalFrame frame = new ExpenseTypeDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblExpenseType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblExpenseType.convertRowIndexToModel(tblExpenseType.getSelectedRow());
+            ExpenseType expenseType = ((ExpenseTypeTableModel) tblExpenseType.getModel()).getValue(index);
+
+            JInternalFrame frame = new ExpenseTypeDetailFrame(expenseType, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo de viatico",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a expense type is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar el tipo de viático?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblExpenseType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblExpenseType.convertRowIndexToModel(tblExpenseType.getSelectedRow());
+            ExpenseType expenseType = ((ExpenseTypeTableModel) tblExpenseType.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el tipo de viatico?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableExpenseType(expenseType.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo de viatico",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
+
+    @Override
+    public void showExpenseTypes(List<ExpenseType> ExpenseTypes) {
+        tblExpenseType.setModel(new ExpenseTypeTableModel(ExpenseTypes));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblExpenseType.getModel());
+        tblExpenseType.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadExpenseTypes();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public void onDataChanged() {
+        presenter.loadExpenseTypes();
+    }
+
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText()));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -146,7 +207,8 @@ public class ExpenseTypeListFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblSearch;
-    private javax.swing.JTable tblClients;
+    private javax.swing.JTable tblExpenseType;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
 }
