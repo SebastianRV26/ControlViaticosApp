@@ -1,5 +1,6 @@
 package app.ui.branchOffice.detail;
 
+import app.ui.listRenderers.ClientListCellRenderer;
 import app.data.model.BranchOffice;
 import app.data.model.Client;
 import app.util.DataChangedListener;

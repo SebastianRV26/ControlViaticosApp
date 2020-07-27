@@ -1,5 +1,6 @@
 package app.ui.task.detail;
 
+import app.ui.listRenderers.TaskTypeListCellRenderer;
 import app.data.model.Task;
 import app.data.model.TaskType;
 import app.util.DataChangedListener;

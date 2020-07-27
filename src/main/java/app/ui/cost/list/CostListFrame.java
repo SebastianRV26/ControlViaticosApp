@@ -188,7 +188,10 @@ public class CostListFrame extends javax.swing.JInternalFrame
 
     @Override
     public void onError(String message) {
-        presenter.loadCosts();
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
