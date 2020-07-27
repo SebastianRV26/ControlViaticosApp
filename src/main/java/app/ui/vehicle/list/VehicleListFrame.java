@@ -1,16 +1,29 @@
 package app.ui.vehicle.list;
 
+import app.data.model.Vehicle;
 import app.ui.vehicle.detail.VehicleDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class VehicleListFrame extends javax.swing.JInternalFrame {
+public class VehicleListFrame extends javax.swing.JInternalFrame
+        implements VehicleListContract.View, DataChangedListener {
+
+    private VehicleListPresenter presenter = new VehicleListPresenter();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form VehicleListFrame
      */
     public VehicleListFrame() {
         initComponents();
+
+        presenter.attachView(this);
+        presenter.loadVehicles();
     }
 
     @SuppressWarnings("unchecked")
@@ -41,25 +54,6 @@ public class VehicleListFrame extends javax.swing.JInternalFrame {
         cbFilter.setMinimumSize(new java.awt.Dimension(16, 20));
         cbFilter.setPreferredSize(new java.awt.Dimension(16, 20));
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "Descripción", "Monto por kilometro", "Nombre usuario responsable"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         jScrollPane1.setViewportView(tblClients);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
@@ -135,25 +129,110 @@ public class VehicleListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a labor is selected
-        JInternalFrame frame = new VehicleDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblClients.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblClients.convertRowIndexToModel(tblClients.getSelectedRow());
+            Vehicle vehicle = ((VehicleTableModel) tblClients.getModel()).getValue(index);
+
+            JInternalFrame frame = new VehicleDetailFrame(vehicle, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un vehiculo",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a labor is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar este vehículo?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblClients.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblClients.convertRowIndexToModel(tblClients.getSelectedRow());
+            Vehicle vehicle = ((VehicleTableModel) tblClients.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el vehiclee?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableVehicle(vehicle.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un vehiclee",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new VehicleDetailFrame(-1);
+        JInternalFrame frame = new VehicleDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Called when the presenter finished to retrieve the vehicle from the
+     * database.
+     *
+     * @param vehicles the list of vehicles
+     */
+    @Override
+    public void showVehicles(List<Vehicle> vehicles) {
+        tblClients.setModel(new VehicleTableModel(vehicles));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblClients.getModel());
+        tblClients.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadVehicles();
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadVehicles();
+    }
+
+    /**
+     * Applies the filter to the table.
+     */
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            int index = cbFilter.getSelectedIndex();
+            if (index == 1) {
+                index = 2;
+            }
+
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), index));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
