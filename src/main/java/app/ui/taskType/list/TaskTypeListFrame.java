@@ -1,16 +1,34 @@
 package app.ui.taskType.list;
 
+import app.data.model.ExpenseType;
+import app.data.model.TaskType;
+import app.ui.expenseType.detail.ExpenseTypeDetailFrame;
+import app.ui.expenseType.list.ExpenseTypeListContract;
+import app.ui.expenseType.list.ExpenseTypeListPresenter;
+import app.ui.expenseType.list.ExpenseTypeTableModel;
 import app.ui.taskType.detail.TaskTypeDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class TaskTypeListFrame extends javax.swing.JInternalFrame {
+public class TaskTypeListFrame extends javax.swing.JInternalFrame
+    implements TaskTypeListContract.View, DataChangedListener{
 
     /**
      * Creates new form TaskTypeListFrame
      */
+    
+    private TaskTypeListPresenter presenter = new TaskTypeListPresenter();
+    private TableRowSorter trsFilter;
+    
     public TaskTypeListFrame() {
         initComponents();
+        presenter.attachView(this);
+        presenter.loadTaskTypes();
     }
 
     @SuppressWarnings("unchecked")
@@ -18,7 +36,7 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClients = new javax.swing.JTable();
+        tblTaskType = new javax.swing.JTable();
         lblSearch = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnEdit = new javax.swing.JButton();
@@ -29,7 +47,7 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setTitle("Tipo labor");
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
+        tblTaskType.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null},
                 {null},
@@ -48,7 +66,7 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tblClients);
+        jScrollPane1.setViewportView(tblTaskType);
 
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
@@ -120,24 +138,50 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new TaskTypeDetailFrame(-1);
+        JInternalFrame frame = new TaskTypeDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a task type is selected
-        JInternalFrame frame = new TaskTypeDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblTaskType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblTaskType.convertRowIndexToModel(tblTaskType.getSelectedRow());
+            TaskType taskType = ((TaskTypeTableModel) tblTaskType.getModel()).getValue(index);
+
+            JInternalFrame frame = new TaskTypeDetailFrame(taskType, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo de labor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a task type is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar el tipo de labor?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblTaskType.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblTaskType.convertRowIndexToModel(tblTaskType.getSelectedRow());
+            TaskType taskType = ((TaskTypeTableModel) tblTaskType.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el tipo de labor?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableTaskType(taskType.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un tipo de labor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
 
@@ -147,7 +191,50 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblSearch;
-    private javax.swing.JTable tblClients;
+    private javax.swing.JTable tblTaskType;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
+    
+    @Override
+    public void refreshData() {
+        presenter.loadTaskTypes();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public void onDataChanged() {
+        presenter.loadTaskTypes();
+    }
+    
+    @Override
+    public void showTaskTypes(List<TaskType> TaskTypes) {
+        tblTaskType.setModel(new TaskTypeTableModel(TaskTypes));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblTaskType.getModel());
+        tblTaskType.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+    
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText()));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 }

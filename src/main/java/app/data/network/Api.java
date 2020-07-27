@@ -23,6 +23,7 @@ public class Api {
     private CostService costService;
     private VehicleService vehicleService;
     private ExpenseTypeService expenseTypeService;
+    private TaskTypeService taskTypeService;
 
     /**
      * @return the unique instance of the API
@@ -53,6 +54,7 @@ public class Api {
         costService = retrofit.create(CostService.class);
         vehicleService = retrofit.create(VehicleService.class);
         expenseTypeService = retrofit.create(ExpenseTypeService.class);
+        taskTypeService = retrofit.create(TaskTypeService.class);
     }
 
     // Services getters
@@ -90,6 +92,10 @@ public class Api {
 
     public ExpenseTypeService getExpenseTypeService() {
         return expenseTypeService;
+    }
+
+    public TaskTypeService getTaskTypeService() {
+        return taskTypeService;
     }
 
 }

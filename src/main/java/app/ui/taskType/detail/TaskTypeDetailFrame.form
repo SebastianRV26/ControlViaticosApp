@@ -35,7 +35,7 @@
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="lblSocialReason" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtSocialReason" max="32767" attributes="0"/>
+                      <Component id="txtTaskType" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
@@ -47,7 +47,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="txtSocialReason" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtTaskType" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lblSocialReason" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -69,7 +69,7 @@
         <Property name="text" type="java.lang.String" value="Descripci&#xf3;n:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtSocialReason">
+    <Component class="javax.swing.JTextField" name="txtTaskType">
     </Component>
     <Component class="javax.swing.JButton" name="btnSave">
       <Properties>
@@ -78,6 +78,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Guardar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnCancel">
       <Properties>

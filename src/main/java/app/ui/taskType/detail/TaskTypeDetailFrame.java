@@ -1,22 +1,41 @@
 package app.ui.taskType.detail;
 
-public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.TaskType;
+import app.util.DataChangedListener;
+import javax.swing.JOptionPane;
+
+public class TaskTypeDetailFrame extends javax.swing.JInternalFrame
+        implements TaskTypeDetailContract.View {
+
+    private TaskTypeDetailPresenter<TaskTypeDetailContract.View> presenter;
+    private TaskType taskType;
+    private DataChangedListener listener;
 
     /**
      * Creates new form TaskTypeDetailFrame
      *
-     * @param taskTypeId the id of the task type to modify, -1 if we are adding
-     * a new task type
+     * @param taskType the task type to modify, null if we are adding a new task
+     * type
+     * @param listener allows the list view to know when a client was added or
+     * modified
      */
-    public TaskTypeDetailFrame(int taskTypeId) {
-        // Means we are adding a task type
-        if (taskTypeId < 0) {
+    public TaskTypeDetailFrame(TaskType taskType,
+            DataChangedListener listener) {
+        this.taskType = taskType;
+        this.listener = listener;
+
+        initComponents();
+
+        // Means we are adding a reason
+        if (taskType == null) {
             setTitle("Agregar tipo de labor");
         } else {
             setTitle("Modificar tipo de labor");
+            txtTaskType.setText(taskType.getDescripcion());
         }
 
-        initComponents();
+        presenter = new TaskTypeDetailPresenter<>();
+        presenter.attachView(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -24,7 +43,7 @@ public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         lblSocialReason = new javax.swing.JLabel();
-        txtSocialReason = new javax.swing.JTextField();
+        txtTaskType = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
 
@@ -36,6 +55,11 @@ public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
         btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
@@ -60,7 +84,7 @@ public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
                         .addGap(20, 20, 20)
                         .addComponent(lblSocialReason)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtSocialReason)))
+                        .addComponent(txtTaskType)))
                 .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
@@ -68,7 +92,7 @@ public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSocialReason, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTaskType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSocialReason))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -81,13 +105,38 @@ public class TaskTypeDetailFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // Check if we're adding or updating to call the correct method
+        if (taskType == null) {
+            presenter.addTaskType(txtTaskType.getText());
+        } else {
+            presenter.updateTaskType(taskType.getId(), txtTaskType.getText());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    @Override
+    public void onSuccess() {
+        // Update the reason list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel lblSocialReason;
-    private javax.swing.JTextField txtSocialReason;
+    private javax.swing.JTextField txtTaskType;
     // End of variables declaration//GEN-END:variables
+
 }
