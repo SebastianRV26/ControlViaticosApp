@@ -1,22 +1,43 @@
 package app.ui.task.detail;
 
-public class TaskDetailFrame extends javax.swing.JInternalFrame {
+import app.data.model.Task;
+import app.data.model.TaskType;
+import app.util.DataChangedListener;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
+public class TaskDetailFrame extends javax.swing.JInternalFrame
+        implements TaskDetailContract.View {
+
+    private Task task;
+    private DataChangedListener listener;
+    private TaskDetailPresenter presenter = new TaskDetailPresenter();
 
     /**
      * Creates new form TaskDetailFrame
      *
-     * @param taskId the id of the task to modify, -1 if we are adding a new
-     * task
+     * @param task the task to modify, null if we are adding a new task
+     * @param listener allows to update the list after a task is added or
+     * modified
      */
-    public TaskDetailFrame(int taskId) {
+    public TaskDetailFrame(Task task, DataChangedListener listener) {
+        this.task = task;
+        this.listener = listener;
+
+        initComponents();
+        cbTaskType.setRenderer(new TaskTypeListCellRenderer());
+
         // Means we are adding a client
-        if (taskId < 0) {
+        if (task == null) {
             setTitle("Agregar labor");
         } else {
             setTitle("Modificar labor");
+            txtDescription.setText(task.getDescription());
         }
 
-        initComponents();
+        presenter.attachView(this);
+        presenter.loadTaskTypes();
     }
 
     @SuppressWarnings("unchecked")
@@ -28,7 +49,7 @@ public class TaskDetailFrame extends javax.swing.JInternalFrame {
         txtDescription = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
-        cbTaskType = new javax.swing.JComboBox<>();
+        cbTaskType = new javax.swing.JComboBox();
 
         setClosable(true);
         setIconifiable(true);
@@ -41,9 +62,19 @@ public class TaskDetailFrame extends javax.swing.JInternalFrame {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
         btnSave.setText("Guardar");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cancel.png"))); // NOI18N
         btnCancel.setText("Cancelar");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,12 +119,58 @@ public class TaskDetailFrame extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        TaskType taskType = (TaskType) cbTaskType.getSelectedItem();
+        if (task == null) {
+            presenter.addTask(txtDescription.getText(), taskType.getId());
+        } else {
+            presenter.updateTask(task.getId(),
+                    txtDescription.getText(), taskType.getId());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    @Override
+    public void showTaskTypes(List<TaskType> taskTypes) {
+        cbTaskType.setModel(new DefaultComboBoxModel<>(taskTypes.toArray()));
+        if (task != null) {
+            for (int i = 0; i < taskTypes.size(); i++) {
+                if (taskTypes.get(i).getId() == task.getIdTaskType()) {
+                    cbTaskType.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * This will be called if a task was added or updated successfully.
+     */
+    @Override
+    public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
-    private javax.swing.JComboBox<String> cbTaskType;
+    private javax.swing.JComboBox cbTaskType;
     private javax.swing.JLabel lblDescription;
     private javax.swing.JLabel lblTaskType;
     private javax.swing.JTextField txtDescription;
     // End of variables declaration//GEN-END:variables
+
 }

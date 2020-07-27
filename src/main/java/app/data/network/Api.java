@@ -20,6 +20,7 @@ public class Api {
     private SupportTypeService supportTypeService;
     private ClientService clientService;
     private SupplierService supplierService;
+    private TaskService taskService;
     private CostService costService;
     private VehicleService vehicleService;
     private ExpenseTypeService expenseTypeService;
@@ -51,6 +52,7 @@ public class Api {
         supportTypeService = retrofit.create(SupportTypeService.class);
         clientService = retrofit.create(ClientService.class);
         supplierService = retrofit.create(SupplierService.class);
+        taskService = retrofit.create(TaskService.class);
         costService = retrofit.create(CostService.class);
         vehicleService = retrofit.create(VehicleService.class);
         expenseTypeService = retrofit.create(ExpenseTypeService.class);
@@ -82,6 +84,9 @@ public class Api {
         return reasonService;
     }
 
+    public TaskService getTaskService() {
+        return taskService;
+    }
     public CostService getCostService() {
         return costService;
     }

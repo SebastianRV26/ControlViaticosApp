@@ -3,7 +3,7 @@ package app.data.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * This data class represents a client from the database.
+ * This data class represents a resource from the database.
  */
 public class Resource {
 
@@ -42,7 +42,7 @@ public class Resource {
     
     @Override
     public String toString() {
-        return "Recurso{"
+        return "Resource{"
                 + "id=" + id
                 + ", responsable=" + responsable
                 + ", descripcion=" + descripcion + '}';

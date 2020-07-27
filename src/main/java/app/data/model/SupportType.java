@@ -3,7 +3,7 @@ package app.data.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * This data class represents a client from the database.
+ * This data class represents a support type from the database.
  */
 public class SupportType {
 

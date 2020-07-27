@@ -1,16 +1,29 @@
 package app.ui.task.list;
 
+import app.data.model.Task;
 import app.ui.task.detail.TaskDetailFrame;
+import app.util.DataChangedListener;
+import app.util.TextChangeListener;
+import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.TableRowSorter;
 
-public class TaskListFrame extends javax.swing.JInternalFrame {
+public class TaskListFrame extends javax.swing.JInternalFrame
+        implements TaskListContract.View, DataChangedListener {
+
+    private TaskListPresenter presenter = new TaskListPresenter();
+    private TableRowSorter trsFilter;
 
     /**
      * Creates new form TaskListFrame
      */
     public TaskListFrame() {
         initComponents();
+
+        presenter.attachView(this);
+        presenter.loadTasks();
     }
 
     @SuppressWarnings("unchecked")
@@ -22,7 +35,7 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
         txtSearch = new javax.swing.JTextField();
         cbFilter = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClients = new javax.swing.JTable();
+        tblTasks = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDisable = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
@@ -41,26 +54,7 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
         cbFilter.setMinimumSize(new java.awt.Dimension(16, 20));
         cbFilter.setPreferredSize(new java.awt.Dimension(16, 20));
 
-        tblClients.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Descripción", "Tipo de labor"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tblClients);
+        jScrollPane1.setViewportView(tblTasks);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEdit.setText("Modificar");
@@ -93,9 +87,7 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGap(20, 20, 20))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -103,8 +95,8 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(lblFilter)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbFilter, 0, 182, Short.MAX_VALUE)
-                        .addGap(20, 20, 20))))
+                        .addComponent(cbFilter, 0, 182, Short.MAX_VALUE)))
+                .addGap(20, 20, 20))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAdd)
@@ -137,25 +129,105 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO: validate that a labor is selected
-        JInternalFrame frame = new TaskDetailFrame(0);
-        getDesktopPane().add(frame);
-        frame.setVisible(true);
+        // Checks if there is a selected item in the table
+        if (tblTasks.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblTasks.convertRowIndexToModel(tblTasks.getSelectedRow());
+            Task task = ((TaskTableModel) tblTasks.getModel()).getValue(index);
+
+            JInternalFrame frame = new TaskDetailFrame(task, this);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar una labor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        };
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisableActionPerformed
-        // TODO: validate that a labor is selected
-        JOptionPane.showInternalConfirmDialog(this,
-                "¿Está seguro de que desea eliminar esta labor?",
-                "Confirmar operación",
-                JOptionPane.YES_NO_OPTION);
+        // Checks if there is a selected item in the table
+        if (tblTasks.getSelectedRow() != -1) {
+            // Gets the data from that index
+            int index = tblTasks.convertRowIndexToModel(tblTasks.getSelectedRow());
+            Task task = ((TaskTableModel) tblTasks.getModel()).getValue(index);
+
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar la labor?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.YES_OPTION) {
+                presenter.disableTask(task.getId());
+            }
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un labor",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDisableActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new TaskDetailFrame(-1);
+        JInternalFrame frame = new TaskDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    /**
+     * Called when the presenter finished to retrieve the tasks from the
+     * database.
+     *
+     * @param tasks the list of tasks
+     */
+    @Override
+    public void showTasks(List<Task> tasks) {
+        tblTasks.setModel(new TaskTableModel(tasks));
+
+        // Creates a filter and set it up to work everytime user types something
+        trsFilter = new TableRowSorter(tblTasks.getModel());
+        tblTasks.setRowSorter(trsFilter);
+        filterData();
+
+        // Typing event
+        txtSearch.getDocument().addDocumentListener((TextChangeListener) () -> {
+            filterData();
+        });
+    }
+
+    @Override
+    public void refreshData() {
+        presenter.loadTasks();
+    }
+
+    @Override
+    public void onError(String message) {
+        JOptionPane.showInternalMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Called by the detail view everytime it need to update this view.
+     */
+    @Override
+    public void onDataChanged() {
+        presenter.loadTasks();
+    }
+
+    /**
+     * Applies the filter to the table.
+     */
+    private void filterData() {
+        if (!txtSearch.getText().isEmpty()) {
+            trsFilter.setRowFilter(RowFilter.regexFilter("(?i)"
+                    + txtSearch.getText(), cbFilter.getSelectedIndex()));
+        } else {
+            trsFilter.setRowFilter(null);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -165,7 +237,8 @@ public class TaskListFrame extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFilter;
     private javax.swing.JLabel lblSearch;
-    private javax.swing.JTable tblClients;
+    private javax.swing.JTable tblTasks;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
 }
