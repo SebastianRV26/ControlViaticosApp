@@ -44,17 +44,6 @@ public class SupplierListFrame extends javax.swing.JInternalFrame
         lblSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
         lblSearch.setText("Buscar:");
 
-        tblSuppliers.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Descripción"
-            }
-        ));
         jScrollPane1.setViewportView(tblSuppliers);
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N

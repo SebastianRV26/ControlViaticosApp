@@ -1,5 +1,6 @@
 package app.ui.vehicle.detail;
 
+import app.ui.listRenderers.ResourceDesListCellRenderer;
 import app.data.model.Resource;
 import app.data.model.Vehicle;
 import app.util.DataChangedListener;
@@ -23,7 +24,7 @@ public class VehicleDetailFrame extends javax.swing.JInternalFrame
      */
     public VehicleDetailFrame(Vehicle vehicle, DataChangedListener listener) {
         initComponents();
-        cbUsernameResourse.setRenderer(new ResourceListCellRenderer());
+        cbUsernameResourse.setRenderer(new ResourceDesListCellRenderer());
 
         this.vehicle = vehicle;
         this.listener = listener;

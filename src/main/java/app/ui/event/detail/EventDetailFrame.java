@@ -4,10 +4,12 @@ import app.data.model.BranchOffice;
 import app.data.model.Client;
 import app.data.model.Cost;
 import app.data.model.Event;
+import app.data.model.Expense;
 import app.data.model.Reason;
 import app.data.model.SupportType;
 import app.data.model.Task;
 import app.data.model.TaskType;
+import app.ui.expense.ExpenseDetailFrame;
 import app.ui.listRenderers.BranchOfficeListCellRenderer;
 import app.ui.listRenderers.ClientListCellRenderer;
 import app.ui.listRenderers.CostsListCellRenderer;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 public class EventDetailFrame extends javax.swing.JInternalFrame
@@ -52,6 +55,7 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
         // Means we are adding an event
         if (eventId == -1) {
             setTitle("Agregar evento");
+            datePicker.setDateToToday();
             presenter.loadData();
         } else {
             setTitle("Modificar evento");
@@ -459,11 +463,25 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_cbTaskTypeActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        JInternalFrame frame = new ExpenseDetailFrame(null);
+        getDesktopPane().add(frame);
+        frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
+        // Check if an item is selected
+        if (tblExpenses.getSelectedRow() != -1) {
+            Expense expense = ((ExpenseTableModel) tblExpenses.getModel())
+                    .getValue(tblExpenses.getSelectedRow());
+            JInternalFrame frame = new ExpenseDetailFrame(expense);
+            getDesktopPane().add(frame);
+            frame.setVisible(true);
+        } else {
+            JOptionPane.showInternalMessageDialog(this,
+                    "Debe seleccionar un viático",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -536,31 +554,35 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                     break;
                 }
             }
+        } else {
+            cbClient.setSelectedItem(null);
         }
     }
 
     public void loadBranchOfficesCombo(List<BranchOffice> branchOffices) {
-        this.branchOffices = branchOffices;
-        Client client = (Client) cbClient.getSelectedItem();
-        Vector<BranchOffice> options = new Vector<>();
+        if (event != null) {
+            this.branchOffices = branchOffices;
+            Client client = (Client) cbClient.getSelectedItem();
+            Vector<BranchOffice> options = new Vector<>();
 
-        int index = 0;
-        int indexToSelect = -1;
+            int index = 0;
+            int indexToSelect = -1;
 
-        for (BranchOffice branchOffice : branchOffices) {
-            if (branchOffice.getClientId() == client.getId()) {
-                options.add(branchOffice);
-                if (event != null
-                        && branchOffice.getClientId() == event.getClientId()) {
-                    indexToSelect = index;
+            for (BranchOffice branchOffice : branchOffices) {
+                if (branchOffice.getClientId() == client.getId()) {
+                    options.add(branchOffice);
+                    if (event != null
+                            && branchOffice.getClientId() == event.getClientId()) {
+                        indexToSelect = index;
+                    }
+                    index++;
                 }
-                index++;
             }
-        }
 
-        cbBranchOffice.setModel(new DefaultComboBoxModel(options));
-        if (indexToSelect != -1) {
-            cbBranchOffice.setSelectedIndex(indexToSelect);
+            cbBranchOffice.setModel(new DefaultComboBoxModel(options));
+            if (indexToSelect != -1) {
+                cbBranchOffice.setSelectedIndex(indexToSelect);
+            }
         }
     }
 
@@ -573,6 +595,8 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                     break;
                 }
             }
+        } else {
+            cbReason.setSelectedItem(null);
         }
     }
 
@@ -585,6 +609,8 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                     break;
                 }
             }
+        } else {
+            cbSupport.setSelectedItem(null);
         }
     }
 
@@ -597,6 +623,8 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                     break;
                 }
             }
+        } else {
+            cbCost.setSelectedItem(null);
         }
     }
 
@@ -609,31 +637,35 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                     break;
                 }
             }
+        } else {
+            cbTaskType.setSelectedItem(null);
         }
     }
 
     public void loadTasksCombo(List<Task> tasks) {
-        this.tasks = tasks;
-        TaskType taskType = (TaskType) cbTaskType.getSelectedItem();
-        Vector<Task> options = new Vector<>();
+        if (event != null) {
+            this.tasks = tasks;
+            TaskType taskType = (TaskType) cbTaskType.getSelectedItem();
+            Vector<Task> options = new Vector<>();
 
-        int index = 0;
-        int indexToSelect = -1;
+            int index = 0;
+            int indexToSelect = -1;
 
-        for (Task task : tasks) {
-            if (task.getIdTaskType() == taskType.getId()) {
-                options.add(task);
-                if (event != null
-                        && task.getIdTaskType() == event.getClientId()) {
-                    indexToSelect = index;
+            for (Task task : tasks) {
+                if (task.getIdTaskType() == taskType.getId()) {
+                    options.add(task);
+                    if (event != null
+                            && task.getIdTaskType() == event.getClientId()) {
+                        indexToSelect = index;
+                    }
+                    index++;
                 }
-                index++;
             }
-        }
 
-        cbTask.setModel(new DefaultComboBoxModel(options));
-        if (indexToSelect != -1) {
-            cbTask.setSelectedIndex(indexToSelect);
+            cbTask.setModel(new DefaultComboBoxModel(options));
+            if (indexToSelect != -1) {
+                cbTask.setSelectedIndex(indexToSelect);
+            }
         }
     }
 

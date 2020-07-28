@@ -45,7 +45,7 @@ public class SupplierTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Supplier supplier= suppliers.get(rowIndex);
+        Supplier supplier = suppliers.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
