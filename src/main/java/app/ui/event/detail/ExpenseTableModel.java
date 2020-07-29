@@ -78,7 +78,7 @@ public class ExpenseTableModel extends AbstractTableModel {
         expenses.add(expense);
         fireTableRowsInserted(expenses.size() - 1, expenses.size() - 1);
     }
-    
+
     public void updateRow(Expense expense) {
         if (expenses.contains(expense)) {
             int index = expenses.lastIndexOf(expense);
@@ -87,8 +87,9 @@ public class ExpenseTableModel extends AbstractTableModel {
     }
 
     public void removeRow(int index) {
-        expenses.remove(index);
-        fireTableRowsDeleted(index, index);
+        if (expenses.remove(index) != null) {
+            fireTableRowsDeleted(index, index);
+        }
     }
 
     public List<Expense> getExpenses() {

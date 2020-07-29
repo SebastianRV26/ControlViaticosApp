@@ -362,7 +362,7 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
                             .log(Level.SEVERE, null, ex);
                 }
                 expense.setBill(bill);
-                expense.setPrice(0);
+                expense.setPrice(price);
                 expense.setPaymentsNumber(numPaymets);
                 expense.setRemarks(remarks);
                 expense.setTicket(ticket);

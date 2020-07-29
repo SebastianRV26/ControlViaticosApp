@@ -69,9 +69,6 @@ public class EventDetailPresenter<V extends EventDetailContract.View>
         request.put("idTipoSoporte", supportTypeId);
         request.put("idMotivo", reasonId);
         request.put("viaticos", getExpensesReq(expenses));
-        
-        Gson gson = new Gson();
-        System.out.println(gson.toJson(request));
 
         Api.getInstance().getEventService().addEvent(request)
                 .subscribeOn(Schedulers.io())
@@ -135,9 +132,6 @@ public class EventDetailPresenter<V extends EventDetailContract.View>
         request.put("idTipoSoporte", supportTypeId);
         request.put("idMotivo", reasonId);
         request.put("viaticos", getExpensesReq(expenses));
-
-        Gson gson = new Gson();
-        System.out.println(gson.toJson(request));
         
         Api.getInstance().getEventService().updateEvent(request)
                 .subscribeOn(Schedulers.io())
