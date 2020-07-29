@@ -38,14 +38,28 @@ public class Expense {
     @SerializedName("idResponsable")
     private Integer resourceId;
 
-    @SerializedName("idVehiculoG")
-    private Integer vehicleIdG;
+    @SerializedName("idVehiculo")
+    private Integer vehicleId;
 
     @SerializedName("kmRecorridos")
     private Float traveledKm;
 
-    @SerializedName("idVehiculoK")
-    private Integer vehicleIdK;
+    public Expense(Date date, String bill, Float price, Integer paymentsNumber,
+            String remarks, String ticket, Integer expenseTypeId,
+            Integer supplierId, Integer resourceId, Integer vehicleId,
+            Float traveledKm) {
+        this.date = date;
+        this.bill = bill;
+        this.price = price;
+        this.paymentsNumber = paymentsNumber;
+        this.remarks = remarks;
+        this.ticket = ticket;
+        this.expenseTypeId = expenseTypeId;
+        this.supplierId = supplierId;
+        this.resourceId = resourceId;
+        this.vehicleId = vehicleId;
+        this.traveledKm = traveledKm;
+    }
 
     public Integer getId() {
         return id;
@@ -127,12 +141,12 @@ public class Expense {
         this.resourceId = resourceId;
     }
 
-    public Integer getVehicleIdG() {
-        return vehicleIdG;
+    public Integer getVehicleId() {
+        return vehicleId;
     }
 
-    public void setVehicleIdG(Integer vehicleIdG) {
-        this.vehicleIdG = vehicleIdG;
+    public void setVehicleId(Integer vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     public Float getTraveledKm() {
@@ -141,14 +155,6 @@ public class Expense {
 
     public void setTraveledKm(Float traveledKm) {
         this.traveledKm = traveledKm;
-    }
-
-    public Integer getVehicleIdK() {
-        return vehicleIdK;
-    }
-
-    public void setVehicleIdK(Integer vehicleIdK) {
-        this.vehicleIdK = vehicleIdK;
     }
 
     @Override
@@ -164,9 +170,8 @@ public class Expense {
                 + ", expenseTypeId=" + expenseTypeId
                 + ", supplierId=" + supplierId
                 + ", resourceId=" + resourceId
-                + ", vehicleIdG=" + vehicleIdG
-                + ", traveledKm=" + traveledKm
-                + ", vehicleIdK=" + vehicleIdK + '}';
+                + ", vehicleIdG=" + vehicleId
+                + ", traveledKm=" + traveledKm + '}';
     }
 
 }

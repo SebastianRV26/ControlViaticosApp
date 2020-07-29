@@ -9,9 +9,14 @@ import app.ui.listRenderers.ExpenseTypeListCellRenderer;
 import app.ui.listRenderers.ResourceListCellRenderer;
 import app.ui.listRenderers.SupplierListCellRenderer;
 import app.ui.listRenderers.VehicleListCellRenderer;
+import app.util.ExpenseTableListener;
+import app.util.Utils;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
@@ -20,14 +25,17 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
 
     private ExpenseDetailPresenter presenter = new ExpenseDetailPresenter();
     private Expense expense;
+    private ExpenseTableListener listener;
+    private boolean firstTimeSetup = true;
 
     /**
      * Creates new form ExpenseDetailFrame
      *
      * @param expense the expense modify, null if we are adding a new expense
      */
-    public ExpenseDetailFrame(Expense expense) {
+    public ExpenseDetailFrame(Expense expense, ExpenseTableListener listener) {
         this.expense = expense;
+        this.listener = listener;
         presenter.attachView(this);
 
         initComponents();
@@ -77,13 +85,13 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
         lblPayments = new javax.swing.JLabel();
         spPayments = new javax.swing.JSpinner();
         lblTicket = new javax.swing.JLabel();
-        txtTicket = new javax.swing.JTextField();
         lblRemarks = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txaRemarks = new javax.swing.JTextArea();
         lblResource = new javax.swing.JLabel();
         cbResource = new javax.swing.JComboBox();
         cbResourceDesc = new javax.swing.JComboBox();
+        txtTicket = new javax.swing.JFormattedTextField();
 
         setClosable(true);
         setIconifiable(true);
@@ -138,11 +146,21 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
 
         spKm.setModel(new javax.swing.SpinnerNumberModel(0.0f, 0.0f, null, 1.0f));
         spKm.setEnabled(false);
+        spKm.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spKmStateChanged(evt);
+            }
+        });
 
         lblVehicle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/car-small.png"))); // NOI18N
         lblVehicle.setText("Vehiculo:");
 
         cbVehicle.setEnabled(false);
+        cbVehicle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbVehicleActionPerformed(evt);
+            }
+        });
 
         lblPayments.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/overflow.png"))); // NOI18N
         lblPayments.setText("Num pax:");
@@ -161,6 +179,18 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
 
         lblResource.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/support-small.png"))); // NOI18N
         lblResource.setText("Recurso:");
+
+        cbResource.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbResourceActionPerformed(evt);
+            }
+        });
+
+        try {
+            txtTicket.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("UU-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -249,7 +279,7 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
                     .addComponent(lblPayments)
                     .addComponent(spPayments, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTicket)
-                    .addComponent(txtTicket, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTicket, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblRemarks)
@@ -274,12 +304,84 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        dispose();
+        int expenseTypeId = cbExpenseType.getSelectedItem() != null
+                ? ((ExpenseType) cbExpenseType.getSelectedItem()).getId() : -1;
+        int supplierId = cbSupplier.getSelectedItem() != null
+                ? ((Supplier) cbSupplier.getSelectedItem()).getId() : -1;
+        int vehicleId = cbVehicle.getSelectedItem() != null
+                ? ((Vehicle) cbVehicle.getSelectedItem()).getId() : -1;
+        int resourceId = cbResource.getSelectedItem() != null
+                ? ((Resource) cbResource.getSelectedItem()).getId() : -1;
+
+        String bill = txtBill.isEnabled() ? txtBill.getText() : null;
+        String date = datePicker.getDateStringOrEmptyString();
+        String ticket = txtTicket.getText();
+        String remarks = txaRemarks.getText();
+
+        if (expenseTypeId == -1) {
+            onError("Debe seleccionar un tipo de viático.");
+        } else if (cbSupplier.isEnabled() && supplierId == -1) {
+            onError("Debe seleccionar un proveedor.");
+        } else if (txtBill.isEnabled() && Utils.textIsNullOrEmpty(bill)) {
+            onError("La factura no puede estar vacia.");
+        } else if (Utils.textIsNullOrEmpty(date)) {
+            onError("La fecha no puede estar vacia.");
+        } else if (cbVehicle.isEnabled() && vehicleId == -1) {
+            onError("Debe seleccionar un vehículo.");
+        } else if (Utils.textIsNullOrEmpty(ticket)) {
+            onError("La boleta no puede estar vacia.");
+        } else if (Utils.textIsNullOrEmpty(remarks)) {
+            onError("Las notas no pueden estar vacias.");
+        } else if (resourceId == -1) {
+            onError("Debe seleccionar un recurso.");
+        } else {
+            float price = (float) spPrice.getValue();
+            Float km = spKm.isEnabled() ? (float) spKm.getValue() : null;
+            int numPaymets = (int) spPayments.getValue();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+            // Means we are adding
+            if (expense == null) {
+                try {
+                    Expense expense = new Expense(formatter.parse(date), bill,
+                            price, numPaymets, remarks, ticket, expenseTypeId,
+                            (supplierId != -1 ? supplierId : null),
+                            resourceId, (vehicleId != -1 ? vehicleId : null),
+                            km);
+                    listener.addExpense(expense);
+                    this.dispose();
+                } catch (ParseException ex) {
+                    Logger.getLogger(ExpenseDetailFrame.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    expense.setDate(formatter.parse(date));
+                } catch (ParseException ex) {
+                    Logger.getLogger(ExpenseDetailFrame.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+                expense.setBill(bill);
+                expense.setPrice(0);
+                expense.setPaymentsNumber(numPaymets);
+                expense.setRemarks(remarks);
+                expense.setTicket(ticket);
+                expense.setExpenseTypeId(expenseTypeId);
+                expense.setSupplierId((supplierId != -1 ? supplierId : null));
+                expense.setResourceId(resourceId);
+                expense.setTraveledKm(km);
+                expense.setVehicleId(vehicleId != -1 ? vehicleId : null);
+
+                listener.updateExpense(expense);
+                dispose();
+            }
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void cbExpenseTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbExpenseTypeActionPerformed
         if (cbExpenseType.getSelectedItem() != null) {
-            ExpenseType expenseType = (ExpenseType) cbExpenseType.getSelectedItem();
+            ExpenseType expenseType
+                    = (ExpenseType) cbExpenseType.getSelectedItem();
 
             // Gasolina
             if (expenseType.getId() == 2) {
@@ -287,22 +389,72 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
                 txtBill.setEnabled(true);
                 spPrice.setEnabled(true);
                 cbVehicle.setEnabled(true);
+
                 spKm.setEnabled(false);
+
+                if (!firstTimeSetup) {
+                    spPrice.setValue(0f);
+                    spKm.setValue(0f);
+                }
             } else if (expenseType.getId() == 3) {
                 // Kilometraje
                 cbSupplier.setEnabled(false);
+                cbSupplier.setSelectedItem(null);
                 txtBill.setEnabled(false);
+                spPrice.setEnabled(false);
+
                 cbVehicle.setEnabled(true);
                 spKm.setEnabled(true);
+
+                if (!firstTimeSetup) {
+                    txtBill.setText("");
+                    spPrice.setValue(0f);
+                }
             } else {
                 cbSupplier.setEnabled(true);
                 txtBill.setEnabled(true);
                 spPrice.setEnabled(true);
+
                 cbVehicle.setEnabled(false);
+                cbVehicle.setSelectedItem(null);
                 spKm.setEnabled(false);
+
+                if (!firstTimeSetup) {
+                    spPrice.setValue(0f);
+                    spKm.setValue(0f);
+                    spKmPrice.setValue(0f);
+                }
             }
+            firstTimeSetup = false;
         }
     }//GEN-LAST:event_cbExpenseTypeActionPerformed
+
+    private void cbResourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbResourceActionPerformed
+        Resource resource = (Resource) cbResource.getSelectedItem();
+        if (resource != null) {
+            cbResourceDesc.setModel(new DefaultComboBoxModel(
+                    new String[]{resource.getDescripcion()}));
+        }
+    }//GEN-LAST:event_cbResourceActionPerformed
+
+    private void cbVehicleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbVehicleActionPerformed
+        if (cbExpenseType.getSelectedItem() != null) {
+            ExpenseType expenseType
+                    = (ExpenseType) cbExpenseType.getSelectedItem();
+            // Kilometraje
+            if (expenseType.getId() == 3) {
+                Vehicle vehicle = (Vehicle) cbVehicle.getSelectedItem();
+                spKmPrice.setValue(vehicle.getMontoKm());
+                spPrice.setValue(((float) spKm.getValue())
+                        * ((float) spKmPrice.getValue()));
+            }
+        }
+    }//GEN-LAST:event_cbVehicleActionPerformed
+
+    private void spKmStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spKmStateChanged
+        spPrice.setValue(
+                ((float) spKm.getValue()) * ((float) spKmPrice.getValue()));
+    }//GEN-LAST:event_spKmStateChanged
 
     @Override
     public void onLoadData(DataResult result) {
@@ -369,16 +521,9 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
 
     public void loadVehicleCombo(List<Vehicle> vehicles) {
         if (expense != null) {
-            int vehicleId = -1;
-            // Gasolina
-            if (expense.getExpenseTypeId() == 2) {
-                vehicleId = expense.getVehicleIdG();
-            } else if (expense.getExpenseTypeId() == 3) {
-                // Kilometraje
-                vehicleId = expense.getVehicleIdK();
-            }
+            Integer vehicleId = expense.getVehicleId();
 
-            if (vehicleId != -1) {
+            if (vehicleId != null) {
                 cbVehicle.setModel(new DefaultComboBoxModel(vehicles.toArray()));
                 for (int i = 0; i < vehicles.size(); i++) {
                     if (vehicles.get(i).getId() == vehicleId) {
@@ -437,7 +582,7 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
     private javax.swing.JSpinner spPrice;
     private javax.swing.JTextArea txaRemarks;
     private javax.swing.JTextField txtBill;
-    private javax.swing.JTextField txtTicket;
+    private javax.swing.JFormattedTextField txtTicket;
     // End of variables declaration//GEN-END:variables
 
 }

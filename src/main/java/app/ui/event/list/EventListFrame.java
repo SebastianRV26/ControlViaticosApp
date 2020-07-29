@@ -12,7 +12,7 @@ import javax.swing.table.TableRowSorter;
 
 public class EventListFrame extends javax.swing.JInternalFrame
         implements EventListContract.View, DataChangedListener {
-
+    
     private EventListPresenter presenter = new EventListPresenter();
     private TableRowSorter trsFilter;
 
@@ -21,11 +21,11 @@ public class EventListFrame extends javax.swing.JInternalFrame
      */
     public EventListFrame() {
         initComponents();
-
+        
         presenter.attachView(this);
         presenter.loadEvents();
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -65,7 +65,7 @@ public class EventListFrame extends javax.swing.JInternalFrame
         });
 
         btnDisable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/disable.png"))); // NOI18N
-        btnDisable.setText("Deshabilitar");
+        btnDisable.setText("Eliminar");
         btnDisable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDisableActionPerformed(evt);
@@ -134,7 +134,7 @@ public class EventListFrame extends javax.swing.JInternalFrame
             // Gets the data from that index
             int index = tblEvents.convertRowIndexToModel(tblEvents.getSelectedRow());
             TableEvent event = ((EventTableModel) tblEvents.getModel()).getValue(index);
-
+            
             JInternalFrame frame = new EventDetailFrame(event.getId(), this);
             getDesktopPane().add(frame);
             frame.setVisible(true);
@@ -152,14 +152,14 @@ public class EventListFrame extends javax.swing.JInternalFrame
             // Gets the data from that index
             int index = tblEvents.convertRowIndexToModel(tblEvents.getSelectedRow());
             TableEvent event = ((EventTableModel) tblEvents.getModel()).getValue(index);
-
+            
             int option = JOptionPane.showInternalConfirmDialog(this,
                     "¿Está seguro de que desea eliminar este evento?",
                     "Confirmar operación",
                     JOptionPane.YES_NO_OPTION);
-
+            
             if (option == JOptionPane.YES_OPTION) {
-
+                presenter.deleteEvent(event.getId());
             }
         } else {
             JOptionPane.showInternalMessageDialog(this,
@@ -195,12 +195,12 @@ public class EventListFrame extends javax.swing.JInternalFrame
             filterData();
         });
     }
-
+    
     @Override
     public void refreshData() {
         presenter.loadEvents();
     }
-
+    
     @Override
     public void onError(String message) {
         JOptionPane.showInternalMessageDialog(this,

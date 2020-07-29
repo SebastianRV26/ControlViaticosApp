@@ -21,9 +21,10 @@ public interface VehicleDetailContract {
 
     interface Presenter<V extends View> extends IBasePresenter<V> {
 
-        void addVehicle(String descripcion, Double montoKm, Integer idResponsable);
+        void addVehicle(String descripcion, Float montoKm, Integer idResponsable);
 
-        void updateVehicle(int id, String descripcion, Double montoKm, Integer idResponsable);
+        void updateVehicle(int id, String descripcion, Float montoKm,
+                Integer idResponsable);
 
         void loadResources();
     }

@@ -14,7 +14,7 @@ public class Vehicle {
     private String descripcion;
 
     @SerializedName("montoKm")
-    private Double montoKm;
+    private Float montoKm;
 
     @SerializedName("idResponsable")
     private Integer idResponsable;
@@ -38,11 +38,11 @@ public class Vehicle {
         this.descripcion = descripcion;
     }
 
-    public Double getMontoKm() {
+    public Float getMontoKm() {
         return montoKm;
     }
 
-    public void setMontoKm(Double montoKm) {
+    public void setMontoKm(Float montoKm) {
         this.montoKm = montoKm;
     }
 

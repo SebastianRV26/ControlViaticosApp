@@ -18,6 +18,7 @@ import app.ui.listRenderers.SupportTypeListCellRenderer;
 import app.ui.listRenderers.TaskListCellRenderer;
 import app.ui.listRenderers.TaskTypeListCellRenderer;
 import app.util.DataChangedListener;
+import app.util.ExpenseTableListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +28,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 public class EventDetailFrame extends javax.swing.JInternalFrame
-        implements EventDetailContract.View {
+        implements EventDetailContract.View, ExpenseTableListener {
 
     private EventDetailPresenter presenter = new EventDetailPresenter();
     private Event event;
@@ -149,14 +150,7 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
         pnlExpenses.setBorder(javax.swing.BorderFactory.createTitledBorder("Viáticos"));
         pnlExpenses.setLayout(new java.awt.BorderLayout());
 
-        tblExpenses.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Factura", "Monto", "Fecha", "Notas", "Boleta"
-            }
-        ));
+        tblExpenses.setModel(new ExpenseTableModel());
         tblExpenses.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblExpenses.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(tblExpenses);
@@ -425,7 +419,37 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        String hour = spHours.getValue().toString() + ":"
+                + spMinutes.getValue().toString();
+        String duration = spDurationHours.getValue().toString() + ":"
+                + spDurationMinutes.getValue().toString();
 
+        int branchOfficeId = cbBranchOffice.getSelectedItem() != null
+                ? ((BranchOffice) cbBranchOffice.getSelectedItem()).getId() : -1;
+        int costId = cbCost.getSelectedItem() != null
+                ? ((Cost) cbCost.getSelectedItem()).getId() : -1;
+        int taskId = cbTask.getSelectedItem() != null
+                ? ((Task) cbTask.getSelectedItem()).getId() : -1;
+        int supportTypeId = cbSupport.getSelectedItem() != null
+                ? ((SupportType) cbSupport.getSelectedItem()).getId() : -1;
+        int reasonId = cbReason.getSelectedItem() != null
+                ? ((Reason) cbReason.getSelectedItem()).getId() : -1;
+
+        // Means we are adding an event
+        if (event == null) {
+            presenter.addExpense(datePicker.getDateStringOrEmptyString(), hour,
+                    txaTaskPerformed.getText(), duration, txaReport.getText(),
+                    chckSolveProblem.isSelected(), branchOfficeId, costId,
+                    taskId, supportTypeId, reasonId,
+                    ((ExpenseTableModel) tblExpenses.getModel()).getExpenses());
+        } else {
+            presenter.updateExpense(event.getId(),
+                    datePicker.getDateStringOrEmptyString(), hour,
+                    txaTaskPerformed.getText(), duration, txaReport.getText(),
+                    chckSolveProblem.isSelected(), branchOfficeId, costId,
+                    taskId, supportTypeId, reasonId,
+                    ((ExpenseTableModel) tblExpenses.getModel()).getExpenses());
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -463,7 +487,7 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_cbTaskTypeActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        JInternalFrame frame = new ExpenseDetailFrame(null);
+        JInternalFrame frame = new ExpenseDetailFrame(null, this);
         getDesktopPane().add(frame);
         frame.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
@@ -473,7 +497,7 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
         if (tblExpenses.getSelectedRow() != -1) {
             Expense expense = ((ExpenseTableModel) tblExpenses.getModel())
                     .getValue(tblExpenses.getSelectedRow());
-            JInternalFrame frame = new ExpenseDetailFrame(expense);
+            JInternalFrame frame = new ExpenseDetailFrame(expense, this);
             getDesktopPane().add(frame);
             frame.setVisible(true);
         } else {
@@ -499,6 +523,9 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
 
     @Override
     public void onSuccess() {
+        // Update the client list view.
+        this.listener.onDataChanged();
+        this.dispose();
     }
 
     @Override
@@ -560,8 +587,9 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }
 
     public void loadBranchOfficesCombo(List<BranchOffice> branchOffices) {
+        this.branchOffices = branchOffices;
+
         if (event != null) {
-            this.branchOffices = branchOffices;
             Client client = (Client) cbClient.getSelectedItem();
             Vector<BranchOffice> options = new Vector<>();
 
@@ -643,8 +671,8 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }
 
     public void loadTasksCombo(List<Task> tasks) {
+        this.tasks = tasks;
         if (event != null) {
-            this.tasks = tasks;
             TaskType taskType = (TaskType) cbTaskType.getSelectedItem();
             Vector<Task> options = new Vector<>();
 
@@ -667,6 +695,21 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
                 cbTask.setSelectedIndex(indexToSelect);
             }
         }
+    }
+
+    @Override
+    public void addExpense(Expense expense) {
+        ((ExpenseTableModel) tblExpenses.getModel()).addRow(expense);
+    }
+
+    @Override
+    public void updateExpense(Expense expense) {
+        System.out.println("sdfsdfdsf");
+        ((ExpenseTableModel) tblExpenses.getModel()).updateRow(expense);
+    }
+
+    @Override
+    public void deleteExpense(Expense expense) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

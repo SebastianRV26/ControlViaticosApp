@@ -82,7 +82,7 @@ public class VehicleDetailFrame extends javax.swing.JInternalFrame
         lblMontoPorKm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/kilometer.png"))); // NOI18N
         lblMontoPorKm.setText("Monto por kilometro");
 
-        spKmCost.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        spKmCost.setModel(new javax.swing.SpinnerNumberModel(0.0f, 0.0f, null, 1.0f));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,10 +140,10 @@ public class VehicleDetailFrame extends javax.swing.JInternalFrame
         Resource resourse = (Resource) cbUsernameResourse.getSelectedItem();
         if (vehicle == null) {
             presenter.addVehicle(txtDescription.getText(),
-                    (Double) spKmCost.getValue(), resourse.getId());
+                    (Float) spKmCost.getValue(), resourse.getId());
         } else {
             presenter.updateVehicle(vehicle.getId(), txtDescription.getText(),
-                    (Double) spKmCost.getValue(), resourse.getId());
+                    (Float) spKmCost.getValue(), resourse.getId());
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 

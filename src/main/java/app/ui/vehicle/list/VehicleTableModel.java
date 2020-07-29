@@ -62,25 +62,6 @@ public class VehicleTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Vehicle vehicle = vehicles.get(rowIndex);
-
-        switch (columnIndex) {
-            case 0:
-                vehicle.setDescripcion((String) aValue);
-                break;
-            case 1:
-                vehicle.setMontoKm((Double) aValue);
-                break;
-            case 2:
-                vehicle.setResponsable((String) aValue);
-                break;
-        }
-
-        fireTableCellUpdated(rowIndex, columnIndex);
-    }
-
-    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }

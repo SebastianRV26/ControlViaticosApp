@@ -20,5 +20,7 @@ public class EventListContract {
     interface Presenter<V extends View> extends IBasePresenter<V> {
 
         void loadEvents();
+
+        void deleteEvent(int eventId);
     }
 }

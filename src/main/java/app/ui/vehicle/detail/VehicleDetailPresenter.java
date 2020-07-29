@@ -24,7 +24,8 @@ public class VehicleDetailPresenter<V extends VehicleDetailContract.View>
      * @param idResponsable responsible id
      */
     @Override
-    public void addVehicle(String descripcion, Double montoKm, Integer idResponsable) {
+    public void addVehicle(String descripcion, Float montoKm,
+            Integer idResponsable) {
         // Let's validate all the fields
         if (Utils.textIsNullOrEmpty(descripcion)) {
             getView().onError("La descripcion no puede estar vacía.");
@@ -76,7 +77,8 @@ public class VehicleDetailPresenter<V extends VehicleDetailContract.View>
      * @param idResponsable responsible id
      */
     @Override
-    public void updateVehicle(int id, String descripcion, Double montoKm, Integer idResponsable) {
+    public void updateVehicle(int id, String descripcion, Float montoKm,
+            Integer idResponsable) {
         // Let's validate all the fields
         if (Utils.textIsNullOrEmpty(descripcion)) {
             getView().onError("La descripcion no puede estar vacía.");
