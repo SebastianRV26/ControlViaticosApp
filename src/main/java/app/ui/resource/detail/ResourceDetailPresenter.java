@@ -43,7 +43,7 @@ public class ResourceDetailPresenter<V extends ResourceDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo recurso");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -90,7 +90,7 @@ public class ResourceDetailPresenter<V extends ResourceDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el recurso");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

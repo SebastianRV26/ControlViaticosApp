@@ -16,7 +16,6 @@ public interface BranchOfficeDetailContract {
 
         void onErrorClients();
 
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

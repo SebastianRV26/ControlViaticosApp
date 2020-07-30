@@ -9,6 +9,7 @@ import app.ui.expenseType.list.ExpenseTypeTableModel;
 import app.ui.taskType.detail.TaskTypeDetailFrame;
 import app.util.DataChangedListener;
 import app.util.TextChangeListener;
+import app.util.Toast;
 import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -236,5 +237,13 @@ public class TaskTypeListFrame extends javax.swing.JInternalFrame
         } else {
             trsFilter.setRowFilter(null);
         }
+    }
+
+    @Override
+    public void onSuccess(String message) {
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
     }
 }

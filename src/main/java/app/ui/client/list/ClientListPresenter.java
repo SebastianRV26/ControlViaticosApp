@@ -51,6 +51,7 @@ public class ClientListPresenter<V extends ClientListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el cliente correctamente");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

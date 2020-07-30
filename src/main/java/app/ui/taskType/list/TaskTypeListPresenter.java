@@ -51,6 +51,7 @@ public class TaskTypeListPresenter<V extends TaskTypeListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el tipo de labor");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

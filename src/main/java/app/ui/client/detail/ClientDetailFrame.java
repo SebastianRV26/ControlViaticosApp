@@ -1,6 +1,7 @@
 package app.ui.client.detail;
 
 import app.data.model.Client;
+import app.util.Toast;
 import app.util.DataChangedListener;
 import javax.swing.JOptionPane;
 
@@ -142,9 +143,13 @@ public class ClientDetailFrame extends javax.swing.JInternalFrame
      * This will be called if a client was added or updated successfully.
      */
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the client list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

@@ -9,8 +9,6 @@ import app.ui.base.IBaseView;
 public interface CostDetailContract {
 
     interface View extends IBaseView {
-
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

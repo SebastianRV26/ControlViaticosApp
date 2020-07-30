@@ -51,6 +51,7 @@ public class BranchOfficeListPresenter<V extends BranchOfficeListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó correctamente");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

@@ -51,6 +51,7 @@ public class CostListPresenter<V extends CostListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se elimino el centro de costo");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

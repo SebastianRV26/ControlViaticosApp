@@ -43,7 +43,7 @@ public class ClientDetailPresenter<V extends ClientDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un cliente correctamente");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -89,7 +89,7 @@ public class ClientDetailPresenter<V extends ClientDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el cliente correctamente");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

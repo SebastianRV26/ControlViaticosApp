@@ -19,6 +19,7 @@ import app.ui.listRenderers.TaskListCellRenderer;
 import app.ui.listRenderers.TaskTypeListCellRenderer;
 import app.util.DataChangedListener;
 import app.util.ExpenseTableListener;
+import app.util.Toast;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -522,9 +523,13 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the client list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

@@ -51,6 +51,7 @@ public class SupportTypeListPresenter<V extends SupportTypeListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el tipo de soporte");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

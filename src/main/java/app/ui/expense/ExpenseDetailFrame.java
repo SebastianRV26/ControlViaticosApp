@@ -10,6 +10,7 @@ import app.ui.listRenderers.ResourceListCellRenderer;
 import app.ui.listRenderers.SupplierListCellRenderer;
 import app.ui.listRenderers.VehicleListCellRenderer;
 import app.util.ExpenseTableListener;
+import app.util.Toast;
 import app.util.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -349,6 +350,7 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
                             resourceId, (vehicleId != -1 ? vehicleId : null),
                             km);
                     listener.addExpense(expense);
+                    onSuccess("Se agrego un nuevo viatico");
                     this.dispose();
                 } catch (ParseException ex) {
                     Logger.getLogger(ExpenseDetailFrame.class.getName())
@@ -373,6 +375,7 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
                 expense.setVehicleId(vehicleId != -1 ? vehicleId : null);
 
                 listener.updateExpense(expense);
+                onSuccess("Se modifico el viatico");
                 dispose();
             }
         }
@@ -584,5 +587,13 @@ public class ExpenseDetailFrame extends javax.swing.JInternalFrame
     private javax.swing.JTextField txtBill;
     private javax.swing.JFormattedTextField txtTicket;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onSuccess(String message) {
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
+    }
 
 }

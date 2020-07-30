@@ -51,6 +51,7 @@ public class ReasonListPresenter<V extends ReasonListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el motivo");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

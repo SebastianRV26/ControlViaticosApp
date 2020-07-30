@@ -2,6 +2,7 @@ package app.ui.cost.detail;
 
 import app.data.model.Cost;
 import app.util.DataChangedListener;
+import app.util.Toast;
 import javax.swing.JOptionPane;
 
 public class CostDetailFrame extends javax.swing.JInternalFrame
@@ -119,9 +120,13 @@ public class CostDetailFrame extends javax.swing.JInternalFrame
      * This will be called if a cost was added or updated successfully.
      */
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the client list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

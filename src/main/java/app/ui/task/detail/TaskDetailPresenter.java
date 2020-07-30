@@ -40,7 +40,7 @@ public class TaskDetailPresenter<V extends TaskDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego una nueva labor");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -85,7 +85,7 @@ public class TaskDetailPresenter<V extends TaskDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico la labor");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

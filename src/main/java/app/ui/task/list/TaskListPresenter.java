@@ -51,6 +51,7 @@ public class TaskListPresenter<V extends TaskListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se elliminó la labor");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

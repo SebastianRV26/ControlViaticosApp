@@ -2,6 +2,7 @@ package app.ui.expenseType.detail;
 
 import app.data.model.ExpenseType;
 import app.util.DataChangedListener;
+import app.util.Toast;
 import javax.swing.JOptionPane;
 
 public class ExpenseTypeDetailFrame extends javax.swing.JInternalFrame
@@ -119,9 +120,13 @@ public class ExpenseTypeDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_btnSaveActionPerformed
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the reason list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

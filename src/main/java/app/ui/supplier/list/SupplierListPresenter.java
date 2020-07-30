@@ -51,6 +51,7 @@ public class SupplierListPresenter<V extends SupplierListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se elimino el proveedor");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

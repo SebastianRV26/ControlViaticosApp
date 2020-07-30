@@ -38,7 +38,7 @@ public class ReasonDetailPresenter<V extends ReasonDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo motivo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -79,7 +79,7 @@ public class ReasonDetailPresenter<V extends ReasonDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el motivo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

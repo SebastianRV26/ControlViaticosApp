@@ -4,6 +4,7 @@ import app.data.model.Resource;
 import app.ui.resource.detail.ResourceDetailFrame;
 import app.util.DataChangedListener;
 import app.util.TextChangeListener;
+import app.util.Toast;
 import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -225,5 +226,13 @@ public class ResourceListFrame extends javax.swing.JInternalFrame
     private javax.swing.JTable tblResource;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onSuccess(String message) {
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
+    }
 
 }

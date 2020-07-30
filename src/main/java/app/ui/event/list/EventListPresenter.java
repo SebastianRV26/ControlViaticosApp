@@ -44,6 +44,7 @@ public class EventListPresenter<V extends EventListContract.View>
                 .subscribe(() -> {
                     // Success
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el evento");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

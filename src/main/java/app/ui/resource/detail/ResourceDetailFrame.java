@@ -2,6 +2,7 @@ package app.ui.resource.detail;
 
 import app.data.model.Resource;
 import app.util.DataChangedListener;
+import app.util.Toast;
 import javax.swing.JOptionPane;
 
 public class ResourceDetailFrame extends javax.swing.JInternalFrame
@@ -131,9 +132,13 @@ public class ResourceDetailFrame extends javax.swing.JInternalFrame
     }//GEN-LAST:event_btnCancelActionPerformed
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the resource list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

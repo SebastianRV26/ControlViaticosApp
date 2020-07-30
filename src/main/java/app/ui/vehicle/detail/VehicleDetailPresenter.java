@@ -49,7 +49,7 @@ public class VehicleDetailPresenter<V extends VehicleDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo vehículo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -103,7 +103,7 @@ public class VehicleDetailPresenter<V extends VehicleDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el vehículo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

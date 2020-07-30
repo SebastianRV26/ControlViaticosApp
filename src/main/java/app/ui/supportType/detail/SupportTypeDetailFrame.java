@@ -2,6 +2,7 @@ package app.ui.supportType.detail;
 
 import app.data.model.SupportType;
 import app.util.DataChangedListener;
+import app.util.Toast;
 import javax.swing.JOptionPane;
 
 public class SupportTypeDetailFrame extends javax.swing.JInternalFrame
@@ -124,9 +125,13 @@ public class SupportTypeDetailFrame extends javax.swing.JInternalFrame
      * This will be called if a client were added or updated successfully.
      */
     @Override
-    public void onSuccess() {
+    public void onSuccess(String message) {
         // Update the client list view.
         this.listener.onDataChanged();
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
         this.dispose();
     }
 

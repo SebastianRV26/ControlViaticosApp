@@ -38,7 +38,7 @@ public class ExpenseTypeDetailPresenter<V extends ExpenseTypeDetailContract.View
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo tipo de viatico");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -79,7 +79,7 @@ public class ExpenseTypeDetailPresenter<V extends ExpenseTypeDetailContract.View
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el tipo de viatico");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

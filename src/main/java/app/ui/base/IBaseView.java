@@ -7,4 +7,6 @@ package app.ui.base;
 public interface IBaseView {
 
     void onError(String message);
+    
+    void onSuccess(String message);
 }

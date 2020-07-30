@@ -4,6 +4,7 @@ import app.data.model.SupportType;
 import app.ui.supportType.detail.SupportTypeDetailFrame;
 import app.util.DataChangedListener;
 import app.util.TextChangeListener;
+import app.util.Toast;
 import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -223,4 +224,12 @@ public class SupportTypeListFrame extends javax.swing.JInternalFrame
     private javax.swing.JTable tblSupportType;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void onSuccess(String message) {
+        // create a Toast message 
+        Toast toast = new Toast(this ,message); 
+        // call the method 
+        toast.showToast(); 
+    }
 }

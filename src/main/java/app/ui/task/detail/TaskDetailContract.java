@@ -13,8 +13,6 @@ public interface TaskDetailContract {
     interface View extends IBaseView {
 
         void showTaskTypes(List<TaskType> taskTypes);
-
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

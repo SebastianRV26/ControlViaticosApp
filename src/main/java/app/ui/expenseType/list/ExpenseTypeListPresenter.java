@@ -51,6 +51,7 @@ public class ExpenseTypeListPresenter<V extends ExpenseTypeListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó el tipo de viatico");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

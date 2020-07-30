@@ -78,7 +78,7 @@ public class EventDetailPresenter<V extends EventDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agregego un nuevo evento");
                 }, throwable -> {
                     // Let's manage errors
                     System.out.println(throwable);
@@ -144,7 +144,7 @@ public class EventDetailPresenter<V extends EventDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el evento");
                 }, throwable -> {
                     // Let's manage errors
                     System.out.println(throwable);

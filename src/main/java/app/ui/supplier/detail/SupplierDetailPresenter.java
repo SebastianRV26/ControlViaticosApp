@@ -38,7 +38,7 @@ public class SupplierDetailPresenter<V extends SupplierDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo proveedor");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -77,7 +77,7 @@ public class SupplierDetailPresenter<V extends SupplierDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el proveedor");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

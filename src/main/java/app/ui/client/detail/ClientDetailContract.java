@@ -10,7 +10,6 @@ public interface ClientDetailContract {
 
     interface View extends IBaseView {
 
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

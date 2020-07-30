@@ -12,8 +12,6 @@ public interface EventDetailContract {
 
     interface View extends IBaseView {
 
-        void onSuccess();
-
         void onLoadData(DataResult result);
 
     }

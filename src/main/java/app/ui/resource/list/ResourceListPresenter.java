@@ -51,6 +51,7 @@ public class ResourceListPresenter<V extends ResourceListContract.View>
                 .subscribe(() -> {
                     // Request successful
                     getView().refreshData();
+                    getView().onSuccess("Se eliminó le recurso");
                 }, throwable -> {
                     // Request error
                     StatusResponse response

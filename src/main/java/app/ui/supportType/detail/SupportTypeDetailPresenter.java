@@ -38,7 +38,7 @@ public class SupportTypeDetailPresenter<V extends SupportTypeDetailContract.View
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo tipo de soporte");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -79,7 +79,7 @@ public class SupportTypeDetailPresenter<V extends SupportTypeDetailContract.View
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el tipo de soporte");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

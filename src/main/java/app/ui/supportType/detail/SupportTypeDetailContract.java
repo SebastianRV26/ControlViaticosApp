@@ -9,8 +9,6 @@ import app.ui.base.IBaseView;
 public interface SupportTypeDetailContract {
 
     interface View extends IBaseView {
-
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

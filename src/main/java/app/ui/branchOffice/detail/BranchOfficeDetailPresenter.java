@@ -40,7 +40,7 @@ public class BranchOfficeDetailPresenter<V extends BranchOfficeDetailContract.Vi
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("La sucursal se agrego correctamente");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -85,7 +85,7 @@ public class BranchOfficeDetailPresenter<V extends BranchOfficeDetailContract.Vi
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("la sucursal se modifico correctamente");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response

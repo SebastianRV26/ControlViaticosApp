@@ -15,8 +15,6 @@ public interface VehicleDetailContract {
         void showResources(List<Resource> resources);
 
         void onErrorResources();
-
-        void onSuccess();
     }
 
     interface Presenter<V extends View> extends IBasePresenter<V> {

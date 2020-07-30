@@ -38,7 +38,7 @@ public class CostDetailPresenter<V extends CostDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se agrego un nuevo centro de costo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
@@ -79,7 +79,7 @@ public class CostDetailPresenter<V extends CostDetailContract.View>
                 .observeOn(Schedulers.single())
                 .subscribe(() -> {
                     // Request executed successfully
-                    getView().onSuccess();
+                    getView().onSuccess("Se modifico el centro de costo");
                 }, throwable -> {
                     // Let's manage errors
                     StatusResponse response
