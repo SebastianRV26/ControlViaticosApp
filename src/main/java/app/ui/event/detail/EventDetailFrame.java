@@ -512,8 +512,14 @@ public class EventDetailFrame extends javax.swing.JInternalFrame
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // Check if an item is selected
         if (tblExpenses.getSelectedRow() != -1) {
-            ((ExpenseTableModel) tblExpenses.getModel())
+            int option = JOptionPane.showInternalConfirmDialog(this,
+                    "¿Está seguro de que desea eliminar el vehiclee?",
+                    "Confirmar operación",
+                    JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                ((ExpenseTableModel) tblExpenses.getModel())
                     .removeRow(tblExpenses.getSelectedRow());
+            }
         } else {
             JOptionPane.showInternalMessageDialog(this,
                     "Debe seleccionar un viático",
